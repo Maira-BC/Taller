@@ -1,0 +1,21 @@
+services:
+  postgres:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: taller
+      POSTGRES_PASSWORD: taller
+      POSTGRES_DB: turnos
+    ports: ["5432:5432"]
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./backend/db/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  mongo:
+    image: mongo:8
+    ports: ["27017:27017"]
+    volumes:
+      - mongodata:/data/db
+
+volumes:
+  pgdata:
+  mongodata:

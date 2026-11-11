@@ -67,6 +67,12 @@ Luego se inicia el proyecto:
 npm run dev
 ```
 
+## Ejecución con dockers
+
+ejecutar 
+docker compose up -d
+
+
 ## API pública utilizada
 
 - API web de geolocalizacion nativa del navegador https://developer.mozilla.org/en-US/docs/Web/API/Geolocation_API
@@ -110,3 +116,9 @@ Cuando algo no funciona es mejor revisar primero el código y los cambios realiz
 - El ingreso mediante RUT corresponde a una simulación. El sistema realiza una validación básica para permitir el ingreso pero el RUT no se almacena ni se utiliza para identificar al usuario o asociarlo a su turno generado
 - Existen navegadores que pueden no ser compatibles con el servicio de ubicacion 
 - Puede aparecer en pantalla que la sucursal esta a kilometros ya que la API apunta al centro de la comuna
+
+
+
+////////to do 
+- crear formulario que pida nombre 
+Separar interfaces con usuarios de dos tipos: Paciente-Admin, el admin puede pasar los turnos y se muestra en pantalla el nombre de paciente

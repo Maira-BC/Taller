@@ -1,0 +1,100 @@
+openapi: 3.1.0
+info: { title: API Turnos, version: 1.0.0 }
+servers: [{ url: /api }]
+paths:
+  /sucursales:
+    get:
+      summary: Lista las sucursales
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: '#/components/schemas/Sucursal' } }
+  /turnos:
+    get:
+      summary: Lista los turnos de una sucursal
+      parameters:
+        - { name: sucursalId, in: query, required: true, schema: { type: integer } }
+        - { name: estado, in: query, schema: { $ref: '#/components/schemas/Estado' } }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: '#/components/schemas/Turno' } }
+    post:
+      summary: Genera un nuevo turno
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [tipo, sucursalId]
+              additionalProperties: false
+              properties:
+                tipo: { type: string, enum: [Matrícula, Finanzas, Becas, Asesoría] }
+                sucursalId: { type: integer }
+      responses:
+        '201':
+          description: Creado
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Turno' }
+  /turnos/{id}:
+    patch:
+      summary: Cambia el estado o el módulo de un turno
+      parameters: [{ name: id, in: path, required: true, schema: { type: integer } }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              properties:
+                estado: { $ref: '#/components/schemas/Estado' }
+                modulo: { type: [integer, 'null'] }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Turno' }
+        '404': { description: No existe }
+  /historial:
+    get:
+      summary: Eventos de turnos (desde MongoDB)
+      parameters: [{ name: sucursalId, in: query, schema: { type: integer } }]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: '#/components/schemas/Evento' } }
+components:
+  schemas:
+    Estado: { type: string, enum: [espera, atendiendo, finalizado] }
+    Sucursal:
+      type: object
+      properties: { id: {type: integer}, nombre: {type: string}, latitude: {type: number}, longitude: {type: number} }
+    Turno:
+      type: object
+      properties:
+        id: { type: integer }
+        numero: { type: string }
+        tipo: { type: string }
+        estado: { $ref: '#/components/schemas/Estado' }
+        modulo: { type: [integer, 'null'] }
+        sucursalId: { type: integer }
+    Evento:
+      type: object
+      properties:
+        turnoId: { type: integer }
+        sucursalId: { type: integer }
+        numero: { type: string }
+        tipo: { type: string }
+        accion: { type: string, enum: [creado, llamado, finalizado] }
+        modulo: { type: [integer, 'null'] }
+        fecha: { type: string, format: date-time }
