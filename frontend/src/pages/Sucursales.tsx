@@ -1,9 +1,10 @@
 import { useNavigate } from 'react-router-dom'
 import Header from '../components/Header'
-import { sucursales, calcularDistancia, sucursalMasCercana } from '../Services/Sucursales'
+import { calcularDistancia, sucursalMasCercana, obtenerSucursales } from '../Services/Sucursales'
 import { useEffect, useState } from 'react';
 import useGeolocation from '../Services/APIgeolocalizacion';
 import { obtenerComuna, type Comuna } from '../Services/APIopenmap';
+import type { Sucursal } from '../Services/Sucursales';
 
 
 type SucursalesProps = {
@@ -15,6 +16,25 @@ function Sucursales({ setSucursal }: SucursalesProps) {
     const [comuna, setComuna] = useState<Comuna | null>(null);
     const [errorComuna, setErrorComuna] = useState<string | null>(null);
     const [seleccionManual, setSeleccionManual] = useState<number | null>(null);
+    const [listaSucursales, setListaSucursales] = useState<Sucursal[]>([])
+    const [cargando, setCargando] = useState(true)
+    const [errorSucursales, setErrorSucursales] = useState('')
+
+    useEffect(() => {
+      async function cargarSucursales() {
+        try {
+          const datos = await obtenerSucursales();
+          setListaSucursales(datos);
+        }
+        catch {
+          setErrorSucursales('No se pudieron cargar las sucursales.')
+        }
+        finally {
+          setCargando(false)
+        }
+      }
+      cargarSucursales()
+    }, [])
 
     useEffect(() => {
         const { latitude, longitude } = location;
@@ -34,19 +54,20 @@ function Sucursales({ setSucursal }: SucursalesProps) {
 
     const { latitude, longitude } = location;
     const tieneUbicacion = latitude !== null && longitude !== null;
-    const cercana = tieneUbicacion ? sucursalMasCercana(latitude, longitude).sucursal : null;
+    const cercana = tieneUbicacion ? sucursalMasCercana(latitude, longitude, listaSucursales)?.sucursal : null;
     const idSeleccionado = seleccionManual ?? cercana?.id ?? null;
-    const sucursalSeleccionada = sucursales.find((s) => s.id === idSeleccionado);
+    const sucursalSeleccionada = listaSucursales.find((s) => s.id === idSeleccionado);
 
     const distanciaA = (id: number) => {
         if (!tieneUbicacion) return null;
-        const sucursal = sucursales.find((s) => s.id === id)!;
+        const sucursal = listaSucursales.find((s) => s.id === id)!;
         return calcularDistancia(latitude, longitude, sucursal.latitude, sucursal.longitude);
     }
 
     let textoSelector = 'Seleccionar sucursal';
        if (sucursalSeleccionada) textoSelector = sucursalSeleccionada.nombre;
-       else if (!error) textoSelector = 'Buscando sucursal más cercana...';
+       else if (cargando) textoSelector = 'Cargando sucursales...';
+       else if (!error && !errorSucursales) textoSelector = 'Buscando sucursal más cercana...';
 
     const navigate = useNavigate()
 
@@ -63,6 +84,9 @@ function Sucursales({ setSucursal }: SucursalesProps) {
         <div className="contenido-sucursales">
           <h2>SELECCIONAR SUCURSAL</h2>
           <hr />
+          {cargando && <p>Cargando sucursales...</p>}
+          {errorSucursales && <p className="mensaje-error">{errorSucursales}</p>}
+          {!cargando && !errorSucursales && listaSucursales.length === 0 && (<p>No hay sucursales disponibles.</p>)}
           <div className="seleccion-sucursal">
             <label id="label-sucursal">Sucursal:</label>
             <div className="dropdown">
@@ -71,7 +95,7 @@ function Sucursales({ setSucursal }: SucursalesProps) {
                 {textoSelector}
               </button>
               <ul className="dropdown-menu menu-sucursales">
-                {sucursales.map((sucursal) => {
+                {listaSucursales.map((sucursal) => {
                   const distancia = distanciaA(sucursal.id);
                   return (
                     <li key={sucursal.id}>
