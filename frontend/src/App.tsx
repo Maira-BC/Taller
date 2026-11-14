@@ -13,6 +13,7 @@ import Historial from "./pages/Historial"
 
 function App() {
   const [sucursal, setSucursal] = useState('')
+  const [sucursalId, setSucursalId] = useState<number | null>(null)
   const [turnos, setTurnos] = useState<TurnoData[]>([])
   const agregarTurno = (nuevoTurno: TurnoData) => {
     setTurnos([...turnos, nuevoTurno])
@@ -20,9 +21,9 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<Inicio />} />
-      <Route path="/sucursales" element={<Sucursales setSucursal={setSucursal} />} />
+      <Route path="/sucursales" element={<Sucursales setSucursal={setSucursal} setSucursalId={setSucursalId} />} />
       <Route path="/ingreso" element={<Ingreso sucursal={sucursal} />} />
-      <Route path="/turno" element={<Turno sucursal={sucursal} cantidadTurnos={turnos.length} agregarTurno={agregarTurno} />} />
+      <Route path="/turno" element={<Turno sucursal={sucursal} sucursalId={sucursalId} agregarTurno={agregarTurno} />} />
       <Route path="/rut" element={<Rut sucursal={sucursal} />} />
       <Route path="/estado" element={<Estado sucursal={sucursal} turnos={turnos} setTurnos={setTurnos} />} />
       <Route path="/historial" element={<Historial sucursal={sucursal} turnos={turnos} />} />
@@ -30,4 +31,4 @@ function App() {
   )
 }
 
-export default App
+export default App
