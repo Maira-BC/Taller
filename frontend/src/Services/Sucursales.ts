@@ -6,6 +6,14 @@ export interface Sucursal {
     longitude: number;
 }
 
+export async function obtenerSucursales(): Promise<Sucursal[]> {
+    const respuesta = await fetch('http://localhost:3000/api/sucursales');
+    if (!respuesta.ok) {
+        throw new Error('No se pudieron obtener las sucursales');
+    }
+    return respuesta.json();
+}
+
 // Coordenadas aproximadas del centro de cada comuna
 export const sucursales: Sucursal[] = [
     { id: 1, nombre: 'Concón', latitude: -32.9230, longitude: -71.5190 },
@@ -29,11 +37,13 @@ export function calcularDistancia(lat1: number, lon1: number, lat2: number, lon2
     return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
-export function sucursalMasCercana(latitude: number, longitude: number): { sucursal: Sucursal; distancia: number } {
-    let masCercana = sucursales[0];
+export function sucursalMasCercana(latitude: number, longitude: number, listaSucursales: Sucursal[]): { sucursal: Sucursal; distancia: number } | null {
+    if (listaSucursales.length === 0) return null;
+
+    let masCercana = listaSucursales[0];
     let menorDistancia = Infinity;
 
-    for (const sucursal of sucursales) {
+    for (const sucursal of listaSucursales) {
         const distancia = calcularDistancia(latitude, longitude, sucursal.latitude, sucursal.longitude);
         if (distancia < menorDistancia) {
             menorDistancia = distancia;
@@ -42,4 +52,4 @@ export function sucursalMasCercana(latitude: number, longitude: number): { sucur
     }
 
     return { sucursal: masCercana, distancia: menorDistancia };
-}
+}
