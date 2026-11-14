@@ -25,7 +25,7 @@ function App() {
       <Route path="/ingreso" element={<Ingreso sucursal={sucursal} />} />
       <Route path="/turno" element={<Turno sucursal={sucursal} sucursalId={sucursalId} agregarTurno={agregarTurno} />} />
       <Route path="/rut" element={<Rut sucursal={sucursal} />} />
-      <Route path="/estado" element={<Estado sucursal={sucursal} turnos={turnos} setTurnos={setTurnos} />} />
+      <Route path="/estado" element={<Estado sucursal={sucursal} sucursalId={sucursalId} />} />
       <Route path="/historial" element={<Historial sucursal={sucursal} turnos={turnos} />} />
     </Routes>
   )
