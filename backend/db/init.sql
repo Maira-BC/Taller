@@ -5,6 +5,17 @@ CREATE TABLE sucursales (
   longitude DOUBLE PRECISION NOT NULL
 );
 
+CREATE TABLE usuarios (
+  id SERIAL PRIMARY KEY,
+  nombre TEXT NOT NULL,
+  correo varchar(100) UNIQUE,
+  rut TEXT NOT NULL,
+
+)
+
+
+
+
 CREATE TABLE turnos (
   id SERIAL PRIMARY KEY,
   numero TEXT NOT NULL,
