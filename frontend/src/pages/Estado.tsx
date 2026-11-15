@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import Header from '../components/Header'
 import { obtenerTurnos, actualizarTurno, type TurnoAPI } from '../Services/Turnos'
+import { obtenerModulos, type ModuloAPI } from '../Services/Modulos'
 
 type EstadoProps = {
     sucursal: string
@@ -10,7 +11,7 @@ type EstadoProps = {
 
 function Estado({ sucursal, sucursalId }: EstadoProps) {
     const navigate = useNavigate()
-    const modulos = [1, 2, 3, 4, 5]
+    const [modulos, setModulos] = useState<ModuloAPI[]>([])
     const [mensaje, setMensaje] = useState('')
     const [turnosAPI, setTurnosAPI] = useState<TurnoAPI[]>([])
     const [cargando, setCargando] = useState(sucursalId !== null)
@@ -24,6 +25,8 @@ function Estado({ sucursal, sucursalId }: EstadoProps) {
             try {
                 const datos = await obtenerTurnos(sucursalId!)
                 setTurnosAPI(datos)
+                const datosModulos = await obtenerModulos(sucursalId!)
+                setModulos(datosModulos)
             }
             catch {
                 setMensaje('No se pudieron cargar los turnos.')
@@ -48,10 +51,10 @@ function Estado({ sucursal, sucursalId }: EstadoProps) {
             turno.estado === 'finalizado'
     )
 
-    const modulosLibres = modulos.filter((numeroModulo) => {
-        return !turnosAPI.some(
+    const modulosLibres = modulos.filter((modulo) => {
+        return modulo.activo && !turnosAPI.some(
             (turno) =>
-                turno.modulo === numeroModulo &&
+                turno.modulo === modulo.numero &&
                 turno.estado === 'atendiendo'
         )
     })
@@ -66,7 +69,7 @@ function Estado({ sucursal, sucursalId }: EstadoProps) {
             return
         }
 
-        const moduloElegido = modulosLibres[0]
+        const moduloElegido = modulosLibres[0].numero
         const siguienteTurno = turnosEnEspera[0]
 
         try {
@@ -113,12 +116,16 @@ function Estado({ sucursal, sucursalId }: EstadoProps) {
             <Header sucursal={sucursal} />
             <main className="estado">
                 <div className="contenido-estado">
-                    <h2>ESTADO DE ATENCIÓN</h2>
+                    <div className="encabezado-estado">
+                        <h2>ESTADO DE ATENCIÓN</h2>
+                        <Link to="/administrar-modulos" className="boton-administrar-modulos" aria-label="Administrar módulos">⚙</Link>
+                    </div>
                     <hr />
                     {cargando && <p>Cargando turnos...</p>}
                     <h3>Módulos de atención</h3>
                     <div className="modulos">
-                        {modulos.map((numeroModulo) => {
+                        {modulos.map((modulo) => {
+                            const numeroModulo = modulo.numero
                             const turnoModulo = turnosAPI.find(
                                 (turno) =>
                                     turno.modulo === numeroModulo &&
@@ -126,7 +133,7 @@ function Estado({ sucursal, sucursalId }: EstadoProps) {
                             )
 
                             return (
-                                <div className="modulo" key={numeroModulo}>
+                                <div className="modulo" key={modulo.id}>
                                     <h4>Módulo {numeroModulo}</h4>
                                     {turnoModulo ? (
                                         <>
@@ -139,7 +146,7 @@ function Estado({ sucursal, sucursalId }: EstadoProps) {
                                         <>
                                             <p className="numero-modulo">---</p>
                                             <p>Atención: ---</p>
-                                            <p>Libre</p>
+                                            <p>{modulo.activo ? 'Libre' : 'Inactivo'}</p>
                                         </>
                                     )}
                                 </div>
