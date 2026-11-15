@@ -8,7 +8,7 @@ export interface TurnoAPI {
 }
 
 export async function crearTurno(tipo: string, sucursalId: number): Promise<TurnoAPI> {
-    const respuesta = await fetch(`http://localhost:3000/api/turnos`, {
+    const respuesta = await fetch(`/api/turnos`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ tipo, sucursalId })
@@ -22,7 +22,7 @@ export async function crearTurno(tipo: string, sucursalId: number): Promise<Turn
 }
 
 export async function obtenerTurnos(sucursalId: number): Promise<TurnoAPI[]> {
-    const respuesta = await fetch(`http://localhost:3000/api/turnos?sucursalId=${sucursalId}`)
+    const respuesta = await fetch(`/api/turnos?sucursalId=${sucursalId}`)
 
     if (!respuesta.ok) {
         throw new Error('No se pudieron obtener los turnos')
@@ -32,7 +32,7 @@ export async function obtenerTurnos(sucursalId: number): Promise<TurnoAPI[]> {
 }
 
 export async function actualizarTurno(id: number, estado: string, modulo: number | null): Promise<TurnoAPI> {
-    const respuesta = await fetch(`http://localhost:3000/api/turnos/${id}`, {
+    const respuesta = await fetch(`/api/turnos/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ estado, modulo })

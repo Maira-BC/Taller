@@ -56,7 +56,8 @@ router.patch('/turnos/:id', async (req, res) => {
 })
 
 router.get('/historial', async (req, res) => {
-  const filtro = req.query.sucursalId ? { sucursalId: Number(req.query.sucursalId) } : {}
+  const filtro: Record<string, unknown> = { accion: 'finalizado' }
+  if (req.query.sucursalId) filtro.sucursalId = Number(req.query.sucursalId)
   const eventos = await Evento.find(filtro, { _id: 0, __v: 0 }).sort({ fecha: -1 }).limit(100)
   res.json(eventos)
 })

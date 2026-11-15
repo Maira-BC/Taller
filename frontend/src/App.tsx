@@ -43,7 +43,7 @@ function App() {
       <Route path="/rut" element={<Rut sucursal={sucursal} />} />
       <Route path="/estado" element={<Estado sucursal={sucursal} sucursalId={sucursalId} />} />
       <Route path="/administrar-modulos" element={<AdministrarModulos sucursal={sucursal} sucursalId={sucursalId} />} />
-      <Route path="/historial" element={<Historial sucursal={sucursal} turnos={turnos} />} />
+      <Route path="/historial" element={<Historial sucursal={sucursal} />} />
     </Routes>
   )
 }
