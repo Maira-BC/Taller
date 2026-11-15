@@ -6,6 +6,7 @@ import swaggerUi from 'swagger-ui-express'
 import * as OpenApiValidator from 'express-openapi-validator'
 import sucursales from './routes/sucursales.js'
 import turnos from './routes/turnos.js'
+import modulosRouter from './routes/modulos.js'
 
 const spec = YAML.parse(fs.readFileSync('openapi.yaml', 'utf8'))
 export const app = express()
@@ -17,6 +18,7 @@ app.use(OpenApiValidator.middleware({ apiSpec: 'openapi.yaml', validateRequests:
 
 app.use('/api/sucursales', sucursales)
 app.use('/api', turnos)
+app.use('/api', modulosRouter)
 
 app.use((err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
   res.status(err.status ?? 500).json({ message: err.message, errors: err.errors })

@@ -1,9 +1,5 @@
-
-
 * {
     font-family: Georgia, 'Times New Roman', Times, serif;
-
-
     box-sizing: border-box;
 }
 
@@ -15,7 +11,6 @@ body {
 
 header {
     font-family: Georgia, 'Times New Roman', Times, serif;
-
     height: 140px;
     background-color: #96d4d6;
     display: flex;
@@ -33,7 +28,6 @@ header {
 
 header h1 {
     font-family: Georgia, 'Times New Roman', Times, serif;
-
     margin: 0;
     font-size: 27px;
     font-weight: normal;
@@ -42,7 +36,6 @@ header h1 {
 
 .inicio {
     font-family: Georgia, 'Times New Roman', Times, serif;
-
     min-height: calc(100vh - 140px);
     display: flex;
     flex-direction: column;
@@ -53,7 +46,6 @@ header h1 {
 
 .inicio h2 {
     font-family: Georgia, 'Times New Roman', Times, serif;
-
     margin: 10px 0;
     font-size: 60px;
     font-weight: normal;
@@ -66,7 +58,6 @@ header h1 {
 
 .boton-continuar {
    font-family: Georgia, 'Times New Roman', Times, serif;
-
     width: 50px;
     height: 50px;
     margin-top: 10px;
@@ -105,7 +96,6 @@ header h1 {
 .contenido-sucursales hr {
     margin-bottom: 30px;
     font-family: Georgia, 'Times New Roman', Times, serif;
-
 }
 
 .seleccion-sucursal {
@@ -182,7 +172,6 @@ header h1 {
 
 .boton-confirmar-sucursal {
     font-family: Georgia, 'Times New Roman', Times, serif;
-
     margin-top: 30px;
 }
 
@@ -294,12 +283,10 @@ header h1 {
 
 .contenido-turno h2 {
     font-family: Georgia, 'Times New Roman', Times, serif;
-
     margin-top: 0;
     text-align: center;
     font-size: 32px;
     font-weight: normal;
-
 }
 
 .contenido-turno hr {
@@ -365,7 +352,6 @@ header h1 {
 
 .contenido-estado {
     font-family: Georgia, 'Times New Roman', Times, serif;
-
     width: 100%;
     max-width: 900px;
     margin: 0 auto;
@@ -383,7 +369,6 @@ header h1 {
 
 .contenido-estado h3 {
     font-family: Georgia, 'Times New Roman', Times, serif;
-
     text-align: center;
     font-size: 22px;
     font-weight: normal;
@@ -391,15 +376,14 @@ header h1 {
 }
 
 .modulos {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 20px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
     margin-top: 25px;
 }
 
 .modulo {
-    width: 150px;
+    width: 100%;
     padding: 15px;
     text-align: center;
 }
@@ -412,7 +396,6 @@ header h1 {
 
 .numero-modulo {
     font-family: Georgia, 'Times New Roman', Times, serif;
-
     font-size: 26px;
     font-weight: bold;
     margin: 10px 0;
@@ -493,15 +476,21 @@ header h1 {
 }
 
 .boton-historial {
-    font-family: Georgia, 'Times New Roman', Times, serif;
-    display: flex;
-    justify-content: center;
+    display: inline-flex;
     align-items: center;
-    width: 50px;
-    height: 50px;
+    justify-content: center;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
     color: #000000;
     text-decoration: none;
     font-size: 25px;
+    transition: background-color 0.2s;
+}
+
+.boton-historial:hover {
+    background-color: #96d4d6;
+    color: #000000;
 }
 
 .mensaje-estado {
@@ -545,6 +534,173 @@ header h1 {
 .boton-volver-historial {
     margin: 25px auto 0;
     background-color: #f2f2f2;
+}
+
+.administracion-modulos {
+    min-height: calc(100vh - 140px);
+    padding: 40px 20px;
+}
+
+.contenido-administracion {
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 30px;
+    background-color: #f2f2f2;
+}
+
+.contenido-administracion h2 {
+    margin-top: 0;
+    text-align: center;
+    font-size: 32px;
+    font-weight: normal;
+}
+
+.lista-modulos-admin {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.tarjeta-modulo-admin {
+    padding: 12px;
+    text-align: center;
+    border: 1px solid #dddddd;
+    border-radius: 12px;
+    background-color: white;
+}
+
+.tarjeta-modulo-admin h3 {
+    font-size: 22px;
+    margin-bottom: 12px;
+}
+
+.tarjeta-modulo-admin p {
+    font-size: 17px;
+}
+
+.boton-estado-admin, .boton-editar-admin, .boton-eliminar-admin {
+    margin: 4px;
+    padding: 8px 14px;
+    border: 1px solid #cccccc;
+    border-radius: 20px;
+    background-color: #f2f2f2;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.boton-estado-admin:hover, .boton-editar-admin:hover {
+    background-color: #96d4d6;
+}
+
+.boton-eliminar-admin:hover {
+    background-color: #f5c6c6;
+}
+
+.formulario-modulo-admin {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.formulario-modulo-admin h3 {
+    font-size: 22px;
+    font-weight: normal;
+    margin-bottom: 20px;
+}
+
+.campos-modulo-admin {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.campos-modulo-admin input {
+    width: 220px;
+    padding: 12px 18px;
+    border: 1px solid #cccccc;
+    border-radius: 30px;
+    background-color: white;
+    font-size: 16px;
+}
+
+.campos-modulo-admin button {
+    padding: 8px 17px;
+    border: 1px solid #cccccc;
+    border-radius: 30px;
+    background-color: #96d4d6;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.campos-modulo-admin button:hover {
+    background-color: #7fc4c7;
+}
+
+.boton-guardar-admin, .boton-cancelar-admin, .boton-confirmar-admin {
+    padding: 7px 12px;
+    margin: 4px;
+    border: 1px solid #cccccc;
+    border-radius: 20px;
+    background-color: #f2f2f2;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.boton-guardar-admin:hover, .boton-confirmar-admin:hover {
+    background-color: #96d4d6;
+}
+
+.boton-cancelar-admin:hover {
+    background-color: #dddddd;
+}
+
+.input-editar-admin {
+    width: 100%;
+    max-width: 180px;
+    padding: 8px 12px;
+    border: 1px solid #cccccc;
+    border-radius: 20px;
+    background-color: white;
+    text-align: center;
+    font-size: 15px;
+    margin-bottom: 5px;
+}
+
+.boton-administrar-modulos {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    color: #000000;
+    text-decoration: none;
+    font-size: 25px;
+    transition: background-color 0.2s;
+}
+
+.boton-administrar-modulos:hover {
+    background-color: #96d4d6;
+    color: #000000;
+}
+
+.encabezado-estado {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.encabezado-estado h2 {
+    margin: 0;
+}
+
+.encabezado-estado .boton-administrar-modulos {
+    position: absolute;
+    right: 0;
 }
 
 @media (max-width: 600px) {
@@ -641,8 +797,8 @@ header h1 {
     }
 
     .modulos {
-        flex-direction: column;
-        align-items: center;
+        grid-template-columns: 1fr;
+        justify-items: center;
     }
 
     .modulo {
@@ -672,5 +828,9 @@ header h1 {
     .fila-turno {
         font-size: 13px;
         gap: 5px;
+    }
+
+    .lista-modulos-admin {
+        grid-template-columns: 1fr;
     }
 }
