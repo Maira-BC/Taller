@@ -78,7 +78,7 @@ function Turno({ sucursal, sucursalId, agregarTurno }: TurnoProps) {
               <p>Tu turno:</p>
               <p className="numero-turno">{turnoGenerado}</p>
               <p>Estado: En espera</p>
-              <Link to="/estado" className="boton-continuar boton-confirmar-turno">→</Link>
+              <Link to="/atencion" className="boton-continuar boton-confirmar-turno">→</Link>
             </div>
           )}
         </div>

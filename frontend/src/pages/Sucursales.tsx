@@ -10,9 +10,10 @@ import type { Sucursal } from '../Services/Sucursales';
 type SucursalesProps = {
   setSucursal: (sucursal: string) => void
   setSucursalId: (id: number) => void
+  esFuncionario: boolean
 }
 
-function Sucursales({ setSucursal, setSucursalId }: SucursalesProps) {
+function Sucursales({ setSucursal, setSucursalId, esFuncionario }: SucursalesProps) {
     const { location, error } = useGeolocation();
     const [comuna, setComuna] = useState<Comuna | null>(null);
     const [errorComuna, setErrorComuna] = useState<string | null>(null);
@@ -76,7 +77,7 @@ function Sucursales({ setSucursal, setSucursalId }: SucursalesProps) {
         if (!sucursalSeleccionada) return;
         setSucursal(sucursalSeleccionada.nombre)
         setSucursalId(sucursalSeleccionada.id)
-        navigate('/ingreso')
+        navigate(esFuncionario ? '/estado' : '/ingreso')
     }
 
   return (

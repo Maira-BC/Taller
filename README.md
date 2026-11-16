@@ -72,6 +72,17 @@ npm run dev
 ejecutar 
 docker compose up -d
 
+### Usuarios de prueba
+
+Al crear la base de datos, `backend/db/init.sql` agrega estos funcionarios para iniciar sesión:
+
+| Correo | Contraseña | RUT |
+|---|---|---|
+| funcionario@taller.cl | prueba123 | 11222333-9 |
+| admin@taller.cl | admin1234 | 12345678-5 |
+
+Si la base ya existía antes de este cambio, se puede recrear con `docker compose down -v` y luego `docker compose up -d` (esto borra los datos guardados).
+
 
 ## API pública utilizada
 
@@ -117,6 +128,13 @@ Cuando algo no funciona es mejor revisar primero el código y los cambios realiz
 - Existen navegadores que pueden no ser compatibles con el servicio de ubicacion 
 - Puede aparecer en pantalla que la sucursal esta a kilometros ya que la API apunta al centro de la comuna
 
+## actualizar db
+docker compose down -v
+docker compose up -d
+
+
+## servicio de hash
+ bcryptjs
 
 
 ////////to do 

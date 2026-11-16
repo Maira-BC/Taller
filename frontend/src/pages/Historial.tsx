@@ -6,17 +6,21 @@ import type {infoTurno} from '../Services/historial'
 
 type HistorialProps = {
     sucursal: string
+    sucursalId: number | null
 }
 
-function Historial({ sucursal }: HistorialProps) {
+function Historial({ sucursal, sucursalId }: HistorialProps) {
     const [historial, setHistorial] = useState<infoTurno[]>([]);
-    const [cargando, setCargando] = useState<boolean>(true);
+    const [cargando, setCargando] = useState<boolean>(sucursalId !== null);
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() =>  {
+     if (sucursalId === null) {
+        return
+     }
      async function fetchHistorial () {
         try {
-         const data = await getHistorial()
+         const data = await getHistorial(sucursalId!)
          setHistorial(data)
         }
         catch {
@@ -27,7 +31,7 @@ function Historial({ sucursal }: HistorialProps) {
         }        
      }
      fetchHistorial()
-    },[]
+    },[sucursalId]
     )
     return (
         <>
@@ -36,12 +40,12 @@ function Historial({ sucursal }: HistorialProps) {
                 <div className="contenido-historial">
                     <h2>HISTORIAL DE ATENCIÓN</h2>
                     <hr/>
-                          {cargando && <p>Cargando sucursales...</p>}
+          {cargando && <p>Cargando historial...</p>}
           {error && <p className="mensaje-error">{error}</p>}
           {!cargando && !error && historial.length === 0 && (<p>No hay turnos registrados</p>)}
                     <ul className="lista-historial">
                         {historial.map((turno) => (
-                            <li key={`${turno.sucursalId}-${turno.numero}`} className="fila-turno">
+                            <li key={turno.turnoId} className="fila-turno">
                                 <span>{turno.numero}</span>
                                 <span>{turno.tipo}</span>
                                 <span>{turno.accion}</span>

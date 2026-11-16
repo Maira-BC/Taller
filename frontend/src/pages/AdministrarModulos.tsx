@@ -1,4 +1,5 @@
 import Header from '../components/Header'
+import { Link } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { obtenerModulos, actualizarModulo, crearModulo, eliminarModulo, type ModuloAPI } from '../Services/Modulos'
 
@@ -143,6 +144,7 @@ function AdministrarModulos({ sucursal, sucursalId }: AdministrarModulosProps) {
                             </div>
                         ))}
                     </div>
+                    <Link to="/estado" className="boton-continuar boton-volver-historial" aria-label="Volver al estado de atención">←</Link>
                 </div>
             </main>
         </>
