@@ -2,6 +2,45 @@ openapi: 3.1.0
 info: { title: API Turnos, version: 1.0.0 }
 servers: [{ url: /api }]
 paths:
+  /usuarios:
+   post:
+    summary: Creacion de usuario
+    requestBody:
+     required: true
+     content:
+      application/json:
+       schema:
+        type: object
+        required: [nombre, correo, contrasena, rut]
+        additionalProperties: false
+        properties:
+         nombre: { type: string }
+         correo: { type: string, format: email }
+         contrasena: { type: string, format: password, minLength: 8}
+         rut: { type: string, pattern: '^\d{7,8}-[\dkK]$' }
+    responses:
+     '201': {description: OK}
+     '409': { description: Correo ya registrado}
+    
+
+  /login:
+   post: 
+    summary: Inicio de sesión
+    requestBody:
+     required: true
+     content:
+      application/json:
+       schema:
+        type: object 
+        required: [correo, contrasena]
+        additionalProperties: false
+        properties:
+         correo: { type: string, format: email }
+         contrasena: { type: string, format: password, minLength: 8 }
+    responses:
+     '200': {description: OK}
+     '401': { description: Credenciales inválidas}
+
   /sucursales:
     get:
       summary: Lista las sucursales
@@ -11,6 +50,57 @@ paths:
           content:
             application/json:
               schema: { type: array, items: { $ref: '#/components/schemas/Sucursal' } }
+  /modulos:
+    get:
+      summary: Lista los módulos de una sucursal
+      parameters:
+        - { name: sucursalId, in: query, required: true, schema: { type: integer } }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { type: array, items: { type: object, properties: { id: { type: integer }, numero: { type: integer }, sucursalId: { type: integer }, activo: { type: boolean } } } }
+    post:
+      summary: Crea un módulo en una sucursal
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [numero, sucursalId]
+              additionalProperties: false
+              properties:
+                numero: { type: integer, minimum: 1 }
+                sucursalId: { type: integer }
+      responses:
+        '201':
+          description: Módulo creado
+  /modulos/{id}:
+    patch:
+      summary: Modifica un módulo
+      parameters: [{ name: id, in: path, required: true, schema: { type: integer } }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              properties:
+                numero: { type: integer, minimum: 1 }
+                activo: { type: boolean }
+      responses:
+        '200':
+          description: Módulo actualizado
+        '404': { description: Módulo no encontrado }
+    delete:
+      summary: Elimina un módulo si no está en atención
+      parameters: [{ name: id, in: path, required: true, schema: { type: integer } }]
+      responses:
+        '204': { description: Módulo eliminado }
+        '409': { description: Módulo no encontrado o en uso }
   /turnos:
     get:
       summary: Lista los turnos de una sucursal
@@ -63,6 +153,16 @@ paths:
             application/json:
               schema: { $ref: '#/components/schemas/Turno' }
         '404': { description: No existe }
+  /eventos:
+    get:
+      summary: Avisa en tiempo real (Server-Sent Events) cuando cambian los turnos de una sucursal
+      parameters: [{ name: sucursalId, in: query, required: true, schema: { type: integer } }]
+      responses:
+        '200':
+          description: Flujo de eventos
+          content:
+            text/event-stream:
+              schema: { type: string }
   /historial:
     get:
       summary: Eventos de turnos (desde MongoDB)

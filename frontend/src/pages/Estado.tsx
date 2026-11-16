@@ -1,41 +1,69 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import Header from '../components/Header'
-import type { Turno as TurnoData } from '../data/turnos'
+import { obtenerTurnos, actualizarTurno, type TurnoAPI } from '../Services/Turnos'
+import { obtenerModulos, type ModuloAPI } from '../Services/Modulos'
+import { useSesion } from '../context/SesionContext'
 
 type EstadoProps = {
     sucursal: string
-    turnos: TurnoData[]
-    setTurnos: (turnos: TurnoData[]) => void
+    sucursalId: number | null
 }
 
-function Estado({ sucursal, turnos, setTurnos }: EstadoProps) {
+function Estado({ sucursal, sucursalId }: EstadoProps) {
     const navigate = useNavigate()
-    const modulos = [1, 2, 3, 4, 5]
+    const { funcionario } = useSesion()
+    const token = funcionario?.token
+
+    const [modulos, setModulos] = useState<ModuloAPI[]>([])
     const [mensaje, setMensaje] = useState('')
+    const [turnosAPI, setTurnosAPI] = useState<TurnoAPI[]>([])
+    const [cargando, setCargando] = useState(sucursalId !== null)
+
+    useEffect(() => {
+        if (sucursalId === null) {
+            return
+        }
+
+        async function cargarTurnos() {
+            try {
+                const datos = await obtenerTurnos(sucursalId!)
+                setTurnosAPI(datos)
+                const datosModulos = await obtenerModulos(sucursalId!)
+                setModulos(datosModulos)
+            }
+            catch {
+                setMensaje('No se pudieron cargar los turnos.')
+            }
+            finally {
+                setCargando(false)
+            }
+        }
+
+        cargarTurnos()
+    }, [sucursalId])
 
     const VolverARegistro = () => {
         navigate('/Turno')
     }
 
-    const turnosEnEspera = turnos.filter(
-        (turno) => turno.estado === 'En espera' && turno.sucursal === sucursal
+    const turnosEnEspera = turnosAPI.filter(
+        (turno) => turno.estado === 'espera'
     )
-    const turnosAtendidos = turnos.filter(
+    const turnosAtendidos = turnosAPI.filter(
         (turno) =>
-            turno.estado === 'Atendido' && turno.sucursal === sucursal
+            turno.estado === 'finalizado'
     )
 
-    const modulosLibres = modulos.filter((numeroModulo) => {
-        return !turnos.some(
+    const modulosLibres = modulos.filter((modulo) => {
+        return modulo.activo && !turnosAPI.some(
             (turno) =>
-                turno.modulo === numeroModulo &&
-                turno.estado === 'En atención' &&
-                turno.sucursal === sucursal
+                turno.modulo === modulo.numero &&
+                turno.estado === 'atendiendo'
         )
     })
 
-    const llamarSiguiente = () => {
+    const llamarSiguiente = async () => {
         if (turnosEnEspera.length === 0) {
             setMensaje('No hay turnos en espera.')
             return
@@ -45,45 +73,58 @@ function Estado({ sucursal, turnos, setTurnos }: EstadoProps) {
             return
         }
 
-        setMensaje('')
-
-        const posicionAleatoria = Math.floor(
-            Math.random() * modulosLibres.length
-        )
-
-        const moduloElegido = modulosLibres[posicionAleatoria]
+        const moduloElegido = modulosLibres[0].numero
         const siguienteTurno = turnosEnEspera[0]
 
-        const turnosActualizados = turnos.map((turno) => {
-            if (turno.numero === siguienteTurno.numero && turno.sucursal === sucursal) {
-                return {
-                    ...turno,
-                    estado: 'En atención',
-                    modulo: moduloElegido
-                }
+        try {
+            if (!token) {
+                alert('Debes iniciar sesión como funcionario')
+                return
             }
 
-            return turno
-        })
+            const turnoActualizado = await actualizarTurno(
+                siguienteTurno.id,
+                'atendiendo',
+                moduloElegido,
+                token
+            )
 
-        setTurnos(turnosActualizados)
+            setTurnosAPI(turnosAPI.map((turno) =>
+                turno.id === turnoActualizado.id ? turnoActualizado : turno
+            ))
+
+            setMensaje('')
+        }
+
+        catch {
+            setMensaje('No se pudo llamar al siguiente turno.')
+        }
     }
 
-    const finalizarTurno = (numeroTurno:string) => {
-        setMensaje('')
-        const turnosActualizados = turnos.map((turno) => {
-            if (turno.numero === numeroTurno && turno.sucursal === sucursal) {
-                return {
-                    ...turno,
-                    estado: 'Atendido',
-                    modulo: null
-                }
+    const finalizarTurno = async (id: number) => {
+        try {
+            if (!token) {
+                alert('Debes iniciar sesión como funcionario')
+                return
             }
 
-            return turno
-        })
+            const turnoFinalizado = await actualizarTurno(
+                id,
+                'finalizado',
+                null,
+                token
+            )
 
-        setTurnos(turnosActualizados)
+            setTurnosAPI(turnosAPI.map((turno) =>
+                turno.id === turnoFinalizado.id ? turnoFinalizado : turno
+            ))
+
+            setMensaje('')
+        }
+
+        catch {
+            setMensaje('No se pudo finalizar el turno.')
+        }
     }
 
     return (
@@ -91,33 +132,37 @@ function Estado({ sucursal, turnos, setTurnos }: EstadoProps) {
             <Header sucursal={sucursal} />
             <main className="estado">
                 <div className="contenido-estado">
-                    <h2>ESTADO DE ATENCIÓN</h2>
+                    <div className="encabezado-estado">
+                        <h2>ESTADO DE ATENCIÓN</h2>
+                        <Link to="/administrar-modulos" className="boton-administrar-modulos" aria-label="Administrar módulos">⚙</Link>
+                    </div>
                     <hr />
+                    {cargando && <p>Cargando turnos...</p>}
                     <h3>Módulos de atención</h3>
                     <div className="modulos">
-                        {modulos.map((numeroModulo) => {
-                            const turnoModulo = turnos.find(
+                        {modulos.map((modulo) => {
+                            const numeroModulo = modulo.numero
+                            const turnoModulo = turnosAPI.find(
                                 (turno) =>
                                     turno.modulo === numeroModulo &&
-                                    turno.estado === 'En atención' &&
-                                    turno.sucursal === sucursal
+                                    turno.estado === 'atendiendo'
                             )
 
                             return (
-                                <div className="modulo" key={numeroModulo}>
+                                <div className="modulo" key={modulo.id}>
                                     <h4>Módulo {numeroModulo}</h4>
                                     {turnoModulo ? (
                                         <>
                                             <p className="numero-modulo">{turnoModulo.numero}</p>
                                             <p>Atención: {turnoModulo.tipo}</p>
                                             <p>En atención</p>
-                                            <button type="button" className="boton-finalizar" onClick={() => finalizarTurno(turnoModulo.numero)}>FINALIZAR</button>
+                                            <button type="button" className="boton-finalizar" onClick={() => finalizarTurno(turnoModulo.id)}>FINALIZAR</button>
                                         </>
                                     ) : (
                                         <>
                                             <p className="numero-modulo">---</p>
                                             <p>Atención: ---</p>
-                                            <p>Libre</p>
+                                            <p>{modulo.activo ? 'Libre' : 'Inactivo'}</p>
                                         </>
                                     )}
                                 </div>
@@ -127,10 +172,10 @@ function Estado({ sucursal, turnos, setTurnos }: EstadoProps) {
                     <h3>Siguientes turnos</h3>
                     <ul className="lista-espera">
                         {turnosEnEspera.map((turno) => (
-                            <li key={`${turno.sucursal}-${turno.numero}`} className="fila-turno">
+                            <li key={turno.id} className="fila-turno">
                                 <span>{turno.numero}</span>
                                 <span>{turno.tipo}</span>
-                                <span>{turno.estado}</span>
+                                <span>{turno.estado === 'espera' ? 'En espera' : turno.estado}</span>
                             </li>
                         ))}
                     </ul>
@@ -139,7 +184,7 @@ function Estado({ sucursal, turnos, setTurnos }: EstadoProps) {
                         <p>Atendidos: {turnosAtendidos.length}</p>
                     </div>
                     <div className="acciones-estado">
-                        <button type="button" className="boton-llamar" onClick={llamarSiguiente}>LLAMAR SIGUIENTE</button>
+                        <button type="button" className="boton-llamar" onClick={llamarSiguiente} disabled={cargando}>LLAMAR SIGUIENTE</button>
                          <button type="button" className="boton-llamar" onClick={VolverARegistro}>
                          AÑADIR TURNO</button>
                         <Link to="/historial" className="boton-historial" aria-label="Ver historial">◷</Link>

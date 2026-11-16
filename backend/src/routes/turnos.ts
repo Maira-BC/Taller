@@ -1,10 +1,30 @@
-import { Router } from 'express'
+import { Router, type Response } from 'express'
 import { pool } from '../db/postgres.js'
 import { Evento } from '../models/Evento.js'
+import { verificarFuncionario } from '../middleware/autenticacion.js'
 
 const router = Router()
 
 const COLUMNAS_TURNO = 'id, numero, tipo, estado, modulo, sucursal_id AS "sucursalId"'
+
+// cambio en vista de turnos por sucursal
+const pantallas = new Map<number, Set<Response>>()
+
+export function notificarCambio(sucursalId: number) {
+  for (const pantalla of pantallas.get(sucursalId) ?? []) {
+    pantalla.write('data: actualizado\n\n')
+  }
+}
+
+router.get('/eventos', (req, res) => {
+  const sucursalId = Number(req.query.sucursalId)
+  res.set({ 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache', Connection: 'keep-alive' })
+  res.flushHeaders()
+
+  if (!pantallas.has(sucursalId)) pantallas.set(sucursalId, new Set())
+  pantallas.get(sucursalId)!.add(res)
+  req.on('close', () => pantallas.get(sucursalId)!.delete(res))
+})
 
 router.get('/turnos', async (req, res) => {
   const { sucursalId, estado } = req.query
@@ -32,10 +52,11 @@ router.post('/turnos', async (req, res) => {
   const turno = rows[0]
 
   await Evento.create({ turnoId: turno.id, sucursalId, numero, tipo, accion: 'creado' })
+  notificarCambio(sucursalId)
   res.status(201).json(turno)
 })
 
-router.patch('/turnos/:id', async (req, res) => {
+router.patch('/turnos/:id', verificarFuncionario, async (req, res) => {
   const { estado, modulo } = req.body
   // El módulo se conserva al finalizar para que quede registrado en el historial
   const { rows } = await pool.query(
@@ -52,11 +73,13 @@ router.patch('/turnos/:id', async (req, res) => {
     turnoId: turno.id, sucursalId: turno.sucursalId, numero: turno.numero, tipo: turno.tipo,
     accion: turno.estado === 'finalizado' ? 'finalizado' : 'llamado', modulo: turno.modulo,
   })
+  notificarCambio(turno.sucursalId)
   res.json(turno)
 })
 
-router.get('/historial', async (req, res) => {
-  const filtro = req.query.sucursalId ? { sucursalId: Number(req.query.sucursalId) } : {}
+router.get('/historial', verificarFuncionario, async (req, res) => {
+  const filtro: Record<string, unknown> = { accion: 'finalizado' }
+  if (req.query.sucursalId) filtro.sucursalId = Number(req.query.sucursalId)
   const eventos = await Evento.find(filtro, { _id: 0, __v: 0 }).sort({ fecha: -1 }).limit(100)
   res.json(eventos)
 })

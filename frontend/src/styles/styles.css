@@ -1,9 +1,5 @@
-
-
 * {
     font-family: Georgia, 'Times New Roman', Times, serif;
-
-
     box-sizing: border-box;
 }
 
@@ -15,7 +11,6 @@ body {
 
 header {
     font-family: Georgia, 'Times New Roman', Times, serif;
-
     height: 140px;
     background-color: #96d4d6;
     display: flex;
@@ -33,16 +28,36 @@ header {
 
 header h1 {
     font-family: Georgia, 'Times New Roman', Times, serif;
-
     margin: 0;
     font-size: 27px;
     font-weight: normal;
     text-align: center;
 }
 
+.sesion-header {
+    position: absolute;
+    right: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+}
+
+.nombre-funcionario {
+    font-size: 15px;
+}
+
+.boton-cerrar-sesion {
+    padding: 6px 15px;
+    border: 1px solid #000000;
+    border-radius: 30px;
+    background-color: white;
+    font-size: 14px;
+    cursor: pointer;
+}
+
 .inicio {
     font-family: Georgia, 'Times New Roman', Times, serif;
-
     min-height: calc(100vh - 140px);
     display: flex;
     flex-direction: column;
@@ -53,10 +68,23 @@ header h1 {
 
 .inicio h2 {
     font-family: Georgia, 'Times New Roman', Times, serif;
-
     margin: 10px 0;
     font-size: 60px;
     font-weight: normal;
+}
+
+.inicio h3 {
+    font-family: Georgia, 'Times New Roman', Times, serif;
+
+    margin: 10px 0;
+    font-size: 30px;
+    font-weight: normal;
+}
+
+.enlace-cambiar-sucursal {
+    margin-top: 40px;
+    color: #000000;
+    font-size: 16px;
 }
 
 .icono-usuario {
@@ -66,7 +94,6 @@ header h1 {
 
 .boton-continuar {
    font-family: Georgia, 'Times New Roman', Times, serif;
-
     width: 50px;
     height: 50px;
     margin-top: 10px;
@@ -105,7 +132,6 @@ header h1 {
 .contenido-sucursales hr {
     margin-bottom: 30px;
     font-family: Georgia, 'Times New Roman', Times, serif;
-
 }
 
 .seleccion-sucursal {
@@ -182,7 +208,6 @@ header h1 {
 
 .boton-confirmar-sucursal {
     font-family: Georgia, 'Times New Roman', Times, serif;
-
     margin-top: 30px;
 }
 
@@ -294,12 +319,10 @@ header h1 {
 
 .contenido-turno h2 {
     font-family: Georgia, 'Times New Roman', Times, serif;
-
     margin-top: 0;
     text-align: center;
     font-size: 32px;
     font-weight: normal;
-
 }
 
 .contenido-turno hr {
@@ -365,7 +388,6 @@ header h1 {
 
 .contenido-estado {
     font-family: Georgia, 'Times New Roman', Times, serif;
-
     width: 100%;
     max-width: 900px;
     margin: 0 auto;
@@ -383,7 +405,6 @@ header h1 {
 
 .contenido-estado h3 {
     font-family: Georgia, 'Times New Roman', Times, serif;
-
     text-align: center;
     font-size: 22px;
     font-weight: normal;
@@ -391,15 +412,14 @@ header h1 {
 }
 
 .modulos {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 20px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
     margin-top: 25px;
 }
 
 .modulo {
-    width: 150px;
+    width: 100%;
     padding: 15px;
     text-align: center;
 }
@@ -412,7 +432,6 @@ header h1 {
 
 .numero-modulo {
     font-family: Georgia, 'Times New Roman', Times, serif;
-
     font-size: 26px;
     font-weight: bold;
     margin: 10px 0;
@@ -493,15 +512,21 @@ header h1 {
 }
 
 .boton-historial {
-    font-family: Georgia, 'Times New Roman', Times, serif;
-    display: flex;
-    justify-content: center;
+    display: inline-flex;
     align-items: center;
-    width: 50px;
-    height: 50px;
+    justify-content: center;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
     color: #000000;
     text-decoration: none;
     font-size: 25px;
+    transition: background-color 0.2s;
+}
+
+.boton-historial:hover {
+    background-color: #96d4d6;
+    color: #000000;
 }
 
 .mensaje-estado {
@@ -547,6 +572,173 @@ header h1 {
     background-color: #f2f2f2;
 }
 
+.administracion-modulos {
+    min-height: calc(100vh - 140px);
+    padding: 40px 20px;
+}
+
+.contenido-administracion {
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 30px;
+    background-color: #f2f2f2;
+}
+
+.contenido-administracion h2 {
+    margin-top: 0;
+    text-align: center;
+    font-size: 32px;
+    font-weight: normal;
+}
+
+.lista-modulos-admin {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.tarjeta-modulo-admin {
+    padding: 12px;
+    text-align: center;
+    border: 1px solid #dddddd;
+    border-radius: 12px;
+    background-color: white;
+}
+
+.tarjeta-modulo-admin h3 {
+    font-size: 22px;
+    margin-bottom: 12px;
+}
+
+.tarjeta-modulo-admin p {
+    font-size: 17px;
+}
+
+.boton-estado-admin, .boton-editar-admin, .boton-eliminar-admin {
+    margin: 4px;
+    padding: 8px 14px;
+    border: 1px solid #cccccc;
+    border-radius: 20px;
+    background-color: #f2f2f2;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.boton-estado-admin:hover, .boton-editar-admin:hover {
+    background-color: #96d4d6;
+}
+
+.boton-eliminar-admin:hover {
+    background-color: #f5c6c6;
+}
+
+.formulario-modulo-admin {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.formulario-modulo-admin h3 {
+    font-size: 22px;
+    font-weight: normal;
+    margin-bottom: 20px;
+}
+
+.campos-modulo-admin {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.campos-modulo-admin input {
+    width: 220px;
+    padding: 12px 18px;
+    border: 1px solid #cccccc;
+    border-radius: 30px;
+    background-color: white;
+    font-size: 16px;
+}
+
+.campos-modulo-admin button {
+    padding: 8px 17px;
+    border: 1px solid #cccccc;
+    border-radius: 30px;
+    background-color: #96d4d6;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.campos-modulo-admin button:hover {
+    background-color: #7fc4c7;
+}
+
+.boton-guardar-admin, .boton-cancelar-admin, .boton-confirmar-admin {
+    padding: 7px 12px;
+    margin: 4px;
+    border: 1px solid #cccccc;
+    border-radius: 20px;
+    background-color: #f2f2f2;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.boton-guardar-admin:hover, .boton-confirmar-admin:hover {
+    background-color: #96d4d6;
+}
+
+.boton-cancelar-admin:hover {
+    background-color: #dddddd;
+}
+
+.input-editar-admin {
+    width: 100%;
+    max-width: 180px;
+    padding: 8px 12px;
+    border: 1px solid #cccccc;
+    border-radius: 20px;
+    background-color: white;
+    text-align: center;
+    font-size: 15px;
+    margin-bottom: 5px;
+}
+
+.boton-administrar-modulos {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    color: #000000;
+    text-decoration: none;
+    font-size: 25px;
+    transition: background-color 0.2s;
+}
+
+.boton-administrar-modulos:hover {
+    background-color: #96d4d6;
+    color: #000000;
+}
+
+.encabezado-estado {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.encabezado-estado h2 {
+    margin: 0;
+}
+
+.encabezado-estado .boton-administrar-modulos {
+    position: absolute;
+    right: 0;
+}
+
 @media (max-width: 600px) {
     header {
         height: 120px;
@@ -570,6 +762,21 @@ header h1 {
 
     .header-texto p {
         margin: 5px 0 0;
+        font-size: 12px;
+    }
+
+    /* En pantallas chicas no hay espacio al costado del título: el botón va arriba a la derecha */
+    .sesion-header {
+        top: 8px;
+        right: 10px;
+    }
+
+    .nombre-funcionario {
+        display: none;
+    }
+
+    .boton-cerrar-sesion {
+        padding: 3px 10px;
         font-size: 12px;
     }
 
@@ -641,8 +848,8 @@ header h1 {
     }
 
     .modulos {
-        flex-direction: column;
-        align-items: center;
+        grid-template-columns: 1fr;
+        justify-items: center;
     }
 
     .modulo {
@@ -672,5 +879,193 @@ header h1 {
     .fila-turno {
         font-size: 13px;
         gap: 5px;
+    }
+
+    .lista-modulos-admin {
+        grid-template-columns: 1fr;
+    }
+}
+
+.atencion {
+    min-height: calc(100vh - 140px);
+    padding: 40px 20px;
+}
+
+.contenido-atencion {
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 30px;
+    background-color: #f2f2f2;
+}
+
+.contenido-atencion h2 {
+    margin-top: 0;
+    text-align: center;
+    font-size: 32px;
+    font-weight: normal;
+}
+
+.contenido-atencion h3 {
+    text-align: center;
+    font-size: 22px;
+    font-weight: normal;
+    margin-top: 30px;
+}
+
+.contenido-atencion .modulo {
+    background-color: white;
+}
+
+.turnos-contiguos {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 30px;
+}
+
+.turno-contiguo {
+    width: 250px;
+    padding: 15px;
+    background-color: white;
+    text-align: center;
+}
+
+.turno-contiguo h3 {
+    margin: 0 0 10px;
+}
+
+.turno-contiguo p {
+    margin: 0;
+}
+
+.numero-contiguo {
+    font-size: 32px;
+    font-weight: bold;
+}
+
+.login, .registro {
+    min-height: calc(100vh - 140px);
+    padding: 40px 20px;
+}
+
+.contenido-login, .contenido-registro {
+    width: 100%;
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 30px;
+    background-color: #f2f2f2;
+}
+
+.contenido-login h2, .contenido-registro h2 {
+    margin-top: 0;
+    text-align: center;
+    font-size: 32px;
+    font-weight: normal;
+}
+
+.contenido-login hr, .contenido-registro hr {
+    margin-bottom: 30px;
+}
+
+.formulario-cuenta {
+    width: 100%;
+    max-width: 350px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.formulario-cuenta label {
+    font-size: 20px;
+    margin: 15px 0 10px;
+}
+
+.formulario-cuenta label:first-of-type {
+    margin-top: 0;
+}
+
+.formulario-cuenta .form-control {
+    width: 100%;
+    height: 55px;
+    font-size: 17px;
+    text-align: center;
+    border: 1px solid #000000;
+    border-radius: 30px;
+}
+
+.boton-cuenta {
+    width: 200px;
+    height: 60px;
+    margin-top: 30px;
+    border: 1px solid #000000;
+    border-radius: 30px;
+    background-color: white;
+    font-size: 17px;
+    cursor: pointer;
+}
+
+.boton-cuenta:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.enlace-cuenta {
+    margin-top: 20px;
+    color: #000000;
+    font-size: 16px;
+}
+
+.mensaje-exito {
+    margin: 10px 0 0;
+    color: #1b6e2f;
+    text-align: center;
+}
+
+.boton-volver-cuenta {
+    margin: 25px auto 0;
+    background-color: #f2f2f2;
+}
+
+@media (max-width: 600px) {
+    .login, .registro {
+        min-height: calc(100vh - 120px);
+        padding: 25px 15px;
+    }
+
+    .contenido-login, .contenido-registro {
+        padding: 20px;
+    }
+
+    .contenido-login h2, .contenido-registro h2 {
+        font-size: 26px;
+    }
+
+    .formulario-cuenta {
+        max-width: 300px;
+    }
+
+    .atencion {
+        min-height: calc(100vh - 120px);
+        padding: 25px 15px;
+    }
+
+    .contenido-atencion {
+        padding: 20px;
+    }
+
+    .contenido-atencion h2 {
+        font-size: 26px;
+    }
+
+    .turnos-contiguos {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .turno-contiguo {
+        width: 100%;
+        max-width: 250px;
     }
 }

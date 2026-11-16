@@ -2,46 +2,53 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import Header from '../components/Header'
 import { tiposAtencion, type Turno as TurnoData } from '../data/turnos'
+import { crearTurno } from '../Services/Turnos'
 
 type TurnoProps = {
   sucursal: string
-  cantidadTurnos: number
+  sucursalId: number | null
   agregarTurno: (nuevoTurno: TurnoData) => void
 }
 
-function Turno({ sucursal, cantidadTurnos, agregarTurno }: TurnoProps) {
+function Turno({ sucursal, sucursalId, agregarTurno }: TurnoProps) {
   const [tipoAtencion, setTipoAtencion] = useState('')
   const [turnoGenerado, setTurnoGenerado] = useState('')
   const [error, setError] = useState('')
+  const [generando, setGenerando] = useState(false)
 
-  const generarTurno = () => {
+  const generarTurno = async () => {
     if (tipoAtencion === '') {
       setError('Seleccione un tipo de atención')
       return
     }
-    const numero = cantidadTurnos + 1
-    let numeroFormateado
-    if (numero < 10) {
-      numeroFormateado = '00' + numero
-    }
-    else if (numero < 100) {
-      numeroFormateado = '0' + numero
-    }
-    else {
-      numeroFormateado = numero
+    if (sucursalId === null) {
+      setError('Seleccione una sucursal primero')
+      return
     }
 
-    const nuevoNumero = 'A-' + numeroFormateado
-    const nuevoTurno: TurnoData = {
-      numero: nuevoNumero,
-      tipo: tipoAtencion,
-      estado: 'En espera',
-      sucursal: sucursal,
-      modulo: null
-    }
-    agregarTurno(nuevoTurno)
-    setTurnoGenerado(nuevoNumero)
+    setGenerando(true)
     setError('')
+    setTurnoGenerado('')
+
+    try {
+      const turno = await crearTurno(tipoAtencion, sucursalId)
+      const nuevoTurno: TurnoData = {
+        numero: turno.numero,
+        tipo: turno.tipo,
+        estado: 'En espera',
+        sucursal: sucursal,
+        modulo: null
+      }
+      agregarTurno(nuevoTurno)
+      setTurnoGenerado(turno.numero)
+    }
+
+    catch {
+      setError('No se pudo generar el turno')
+    }
+    finally {
+      setGenerando(false)
+    }
   }
 
   return (
@@ -61,8 +68,8 @@ function Turno({ sucursal, cantidadTurnos, agregarTurno }: TurnoProps) {
                 <option key={tipo} value={tipo}>{tipo}</option>
               ))}
             </select>
-            <button type="button" className="boton-generar" onClick={generarTurno}>
-              GENERAR NÚMERO
+            <button type="button" className="boton-generar" onClick={generarTurno} disabled={generando}>
+              {generando ? 'Generando...' : 'GENERAR NÚMERO'}
             </button>
           </div>
           {error && <p className="mensaje-error">{error}</p>}
@@ -71,7 +78,7 @@ function Turno({ sucursal, cantidadTurnos, agregarTurno }: TurnoProps) {
               <p>Tu turno:</p>
               <p className="numero-turno">{turnoGenerado}</p>
               <p>Estado: En espera</p>
-              <Link to="/estado" className="boton-continuar boton-confirmar-turno">→</Link>
+              <Link to="/atencion" className="boton-continuar boton-confirmar-turno">→</Link>
             </div>
           )}
         </div>
@@ -80,4 +87,4 @@ function Turno({ sucursal, cantidadTurnos, agregarTurno }: TurnoProps) {
   )
 }
 
-export default Turno
+export default Turno
