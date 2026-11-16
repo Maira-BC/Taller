@@ -173,6 +173,18 @@ paths:
           content:
             application/json:
               schema: { type: array, items: { $ref: '#/components/schemas/Evento' } }
+  /historial/ultimo:
+    get:
+      summary: Último turno finalizado de una sucursal (público, para la pantalla de atención)
+      parameters: [{ name: sucursalId, in: query, required: true, schema: { type: integer } }]
+      responses:
+        '200':
+          description: OK (null si aún no hay turnos finalizados)
+          content:
+            application/json:
+              schema:
+                type: [object, 'null']
+                properties: { numero: { type: string }, modulo: { type: [integer, 'null'] } }
 components:
   schemas:
     Estado: { type: string, enum: [espera, atendiendo, finalizado] }

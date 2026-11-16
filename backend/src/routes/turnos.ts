@@ -77,6 +77,15 @@ router.patch('/turnos/:id', verificarFuncionario, async (req, res) => {
   res.json(turno)
 })
 
+// Público: la pantalla de atención solo necesita el último turno finalizado, no el historial completo
+router.get('/historial/ultimo', async (req, res) => {
+  const evento = await Evento.findOne(
+    { accion: 'finalizado', sucursalId: Number(req.query.sucursalId) },
+    { _id: 0, numero: 1, modulo: 1 }
+  ).sort({ fecha: -1 })
+  res.json(evento)
+})
+
 router.get('/historial', verificarFuncionario, async (req, res) => {
   const filtro: Record<string, unknown> = { accion: 'finalizado' }
   if (req.query.sucursalId) filtro.sucursalId = Number(req.query.sucursalId)

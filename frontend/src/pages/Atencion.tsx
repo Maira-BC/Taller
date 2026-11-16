@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react'
 import Header from '../components/Header'
 import { obtenerTurnos, type TurnoAPI } from '../Services/Turnos'
-import { getHistorial, type infoTurno } from '../Services/historial'
+import { getUltimoFinalizado, type UltimoTurno } from '../Services/historial'
 import { obtenerModulos, type ModuloAPI } from '../Services/Modulos'
-import { useSesion } from '../context/SesionContext'
 
 type AtencionProps = {
     sucursal: string
@@ -11,12 +10,9 @@ type AtencionProps = {
 }
 
 function Atencion({ sucursal, sucursalId }: AtencionProps) {
-    const { funcionario } = useSesion()
-    const token = funcionario?.token
-
     const [modulos, setModulos] = useState<ModuloAPI[]>([])
     const [turnos, setTurnos] = useState<TurnoAPI[]>([])
-    const [anterior, setAnterior] = useState<infoTurno | null>(null)
+    const [anterior, setAnterior] = useState<UltimoTurno | null>(null)
     const [cargando, setCargando] = useState(sucursalId !== null)
     const [error, setError] = useState('')
 
@@ -27,19 +23,14 @@ function Atencion({ sucursal, sucursalId }: AtencionProps) {
 
         async function cargarTurnos() {
             try {
-                if (!token) {
-                    setError('Debes iniciar sesión como funcionario')
-                    return
-                }
-
-                const [datosTurnos, historial, datosModulos] = await Promise.all([
+                const [datosTurnos, ultimo, datosModulos] = await Promise.all([
                     obtenerTurnos(sucursalId!),
-                    getHistorial(sucursalId!, token),
+                    getUltimoFinalizado(sucursalId!),
                     obtenerModulos(sucursalId!)
                 ])
                 setTurnos(datosTurnos)
                 setModulos(datosModulos)
-                setAnterior(historial[0] ?? null)
+                setAnterior(ultimo)
                 setError('')
             }
             catch {
@@ -56,7 +47,7 @@ function Atencion({ sucursal, sucursalId }: AtencionProps) {
         const eventos = new EventSource(`/api/eventos?sucursalId=${sucursalId}`)
         eventos.onmessage = cargarTurnos
         return () => eventos.close()
-    }, [sucursalId, token])
+    }, [sucursalId])
 
     const siguiente = turnos.find((turno) => turno.estado === 'espera')
 

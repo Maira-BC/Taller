@@ -19,3 +19,14 @@ export async function getHistorial(sucursalId: number, token: string):Promise<in
     const listaTurnos:  infoTurno[] = await res.json();
     return listaTurnos;
 }
+
+export type UltimoTurno = Pick<infoTurno, 'numero' | 'modulo'>
+
+export async function getUltimoFinalizado(sucursalId: number): Promise<UltimoTurno | null> {
+    const res = await fetch(`/api/historial/ultimo?sucursalId=${sucursalId}`)
+
+    if (!res.ok) {
+        throw new Error("No se pudo cargar el último turno")
+    }
+    return res.json();
+}

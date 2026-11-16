@@ -63,7 +63,7 @@ function App() {
         <Route path="/historial" element={ funcionario?.token ? <Historial sucursal={sucursal} sucursalId={sucursalId} /> : <Navigate to="/login" replace /> } />
         <Route path="/login" element={<Login sucursal={sucursal} sucursalId={sucursalId} setFuncionario={setFuncionario} />} />
         <Route path="/registro" element={<Registro sucursal={sucursal} />} />
-        <Route path="/atencion" element={ funcionario?.token ? <Atencion sucursal={sucursal} sucursalId={sucursalId} /> : <Navigate to="/login" replace /> } />
+        <Route path="/atencion" element={  <Atencion sucursal={sucursal} sucursalId={sucursalId} /> } />
       </Routes>
     </SesionContext.Provider>
   )
