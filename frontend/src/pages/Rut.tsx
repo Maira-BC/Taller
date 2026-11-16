@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Header from '../components/Header'
+import { formatearRut, validarRut } from '../utils/rut'
 
 type RutProps = {
   sucursal: string
@@ -11,14 +12,23 @@ function Rut({ sucursal }: RutProps) {
     const [error, setError] = useState('')
     const navigate = useNavigate()
     const agregarCaracter = (valor: string) => {
+        // La K solo puede ser el dígito verificador: va al final y después de al menos 7 dígitos
+        if (rut.endsWith('K')) return
+        if (valor === 'K' && rut.length < 7) return
         if (rut.length < 9) {
             setRut(rut + valor)
         }
+        setError('')
     }
     const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+        // Sin esto el formulario recarga la página y se pierde la sucursal elegida
         event.preventDefault()
         if (rut.length < 8) {
-            setError('Ingrese un RUT válido')
+            setError('El RUT está incompleto')
+            return
+        }
+        if (!validarRut(rut)) {
+            setError('El dígito verificador no corresponde a ese RUT')
             return
         }
         setError('')
@@ -35,7 +45,7 @@ function Rut({ sucursal }: RutProps) {
             <div className="col-11 col-md-6 col-lg-4">
                 <form className="formulario-rut" onSubmit={handleSubmit}>
                     <label htmlFor="rut" className="form-label">Ingrese su RUT</label>
-                    <input type="text" id="rut" className="form-control" value={rut} readOnly placeholder="12.345.678-9" />
+                    <input type="text" id="rut" className="form-control" value={formatearRut(rut)} readOnly placeholder="12345678-5" />
                     {error && <p className="mensaje-error">{error}</p>}
                     <div className="teclado-rut">
                         <button type="button" className="tecla-rut" onClick={() => agregarCaracter('1')}>1</button>

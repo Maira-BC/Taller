@@ -1,10 +1,29 @@
-import { Router } from 'express'
+import { Router, type Response } from 'express'
 import { pool } from '../db/postgres.js'
 import { Evento } from '../models/Evento.js'
 
 const router = Router()
 
 const COLUMNAS_TURNO = 'id, numero, tipo, estado, modulo, sucursal_id AS "sucursalId"'
+
+// Pantallas conectadas por sucursal (Server-Sent Events), para avisarles cuando cambian los turnos
+const pantallas = new Map<number, Set<Response>>()
+
+function notificarCambio(sucursalId: number) {
+  for (const pantalla of pantallas.get(sucursalId) ?? []) {
+    pantalla.write('data: actualizado\n\n')
+  }
+}
+
+router.get('/eventos', (req, res) => {
+  const sucursalId = Number(req.query.sucursalId)
+  res.set({ 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache', Connection: 'keep-alive' })
+  res.flushHeaders()
+
+  if (!pantallas.has(sucursalId)) pantallas.set(sucursalId, new Set())
+  pantallas.get(sucursalId)!.add(res)
+  req.on('close', () => pantallas.get(sucursalId)!.delete(res))
+})
 
 router.get('/turnos', async (req, res) => {
   const { sucursalId, estado } = req.query
@@ -32,6 +51,7 @@ router.post('/turnos', async (req, res) => {
   const turno = rows[0]
 
   await Evento.create({ turnoId: turno.id, sucursalId, numero, tipo, accion: 'creado' })
+  notificarCambio(sucursalId)
   res.status(201).json(turno)
 })
 
@@ -52,6 +72,7 @@ router.patch('/turnos/:id', async (req, res) => {
     turnoId: turno.id, sucursalId: turno.sucursalId, numero: turno.numero, tipo: turno.tipo,
     accion: turno.estado === 'finalizado' ? 'finalizado' : 'llamado', modulo: turno.modulo,
   })
+  notificarCambio(turno.sucursalId)
   res.json(turno)
 })
 
