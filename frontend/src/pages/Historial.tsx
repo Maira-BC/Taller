@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { getHistorial } from '../Services/historial'
 import { useEffect, useState } from 'react'
 import type {infoTurno} from '../Services/historial'
+import { useSesion } from '../context/SesionContext'
 
 type HistorialProps = {
     sucursal: string
@@ -10,6 +11,9 @@ type HistorialProps = {
 }
 
 function Historial({ sucursal, sucursalId }: HistorialProps) {
+    const { funcionario } = useSesion()
+    const token = funcionario?.token
+
     const [historial, setHistorial] = useState<infoTurno[]>([]);
     const [cargando, setCargando] = useState<boolean>(sucursalId !== null);
     const [error, setError] = useState<string | null>(null);
@@ -18,20 +22,28 @@ function Historial({ sucursal, sucursalId }: HistorialProps) {
      if (sucursalId === null) {
         return
      }
+
      async function fetchHistorial () {
         try {
-         const data = await getHistorial(sucursalId!)
-         setHistorial(data)
+            if (!token) {
+                setError('Debes iniciar sesión como funcionario')
+                setCargando(false)
+                return
+            }
+
+            const data = await getHistorial(sucursalId!, token)
+            setHistorial(data)
         }
         catch {
-         setError("No se pudo cargar el historial")
+            setError("No se pudo cargar el historial")
         }
         finally {
-         setCargando(false)
-        }        
+            setCargando(false)
+        }
      }
+
      fetchHistorial()
-    },[sucursalId]
+    },[sucursalId, token]
     )
     return (
         <>

@@ -16,6 +16,7 @@ import Atencion from "./pages/Atencion"
 import AdministrarModulos from "./pages/AdministrarModulos"
 import type { UsuarioAPI } from "./Services/Usuarios"
 import { SesionContext } from "./context/SesionContext"
+import { Navigate } from 'react-router-dom'
 
 // La sucursal se guarda en el navegador para pedirla una sola vez, aunque se recargue la página
 const CLAVE_SUCURSAL = 'sucursal'
@@ -57,12 +58,12 @@ function App() {
         <Route path="/ingreso" element={<Ingreso sucursal={sucursal} />} />
         <Route path="/turno" element={<Turno sucursal={sucursal} sucursalId={sucursalId} agregarTurno={agregarTurno} />} />
         <Route path="/rut" element={<Rut sucursal={sucursal} />} />
-        <Route path="/estado" element={<Estado sucursal={sucursal} sucursalId={sucursalId} />} />
-        <Route path="/administrar-modulos" element={<AdministrarModulos sucursal={sucursal} sucursalId={sucursalId} />} />
-        <Route path="/historial" element={<Historial sucursal={sucursal} sucursalId={sucursalId} />} />
+        <Route path="/estado" element={ funcionario?.token ? <Estado sucursal={sucursal} sucursalId={sucursalId} /> : <Navigate to="/login" replace /> } />
+        <Route path="/administrar-modulos" element={ funcionario?.token ? <AdministrarModulos sucursal={sucursal} sucursalId={sucursalId} /> : <Navigate to="/login" replace /> } />
+        <Route path="/historial" element={ funcionario?.token ? <Historial sucursal={sucursal} sucursalId={sucursalId} /> : <Navigate to="/login" replace /> } />
         <Route path="/login" element={<Login sucursal={sucursal} sucursalId={sucursalId} setFuncionario={setFuncionario} />} />
         <Route path="/registro" element={<Registro sucursal={sucursal} />} />
-        <Route path="/atencion" element={<Atencion sucursal={sucursal} sucursalId={sucursalId} />} />
+        <Route path="/atencion" element={ funcionario?.token ? <Atencion sucursal={sucursal} sucursalId={sucursalId} /> : <Navigate to="/login" replace /> } />
       </Routes>
     </SesionContext.Provider>
   )

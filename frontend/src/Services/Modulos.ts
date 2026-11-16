@@ -15,10 +15,10 @@ export async function obtenerModulos(sucursalId: number): Promise<ModuloAPI[]> {
     return respuesta.json()
 }
 
-export async function actualizarModulo(id: number, cambios: { activo?: boolean; numero?: number }): Promise<ModuloAPI> {
+export async function actualizarModulo(id: number, cambios: { activo?: boolean; numero?: number }, token: string): Promise<ModuloAPI> {
     const respuesta = await fetch(`/api/modulos/${id}`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify(cambios)
     })
 
@@ -29,10 +29,10 @@ export async function actualizarModulo(id: number, cambios: { activo?: boolean; 
     return respuesta.json()
 }
 
-export async function crearModulo(numero: number, sucursalId: number): Promise<ModuloAPI> {
+export async function crearModulo(numero: number, sucursalId: number, token: string): Promise<ModuloAPI> {
     const respuesta = await fetch(`/api/modulos`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ numero, sucursalId })
     })
 
@@ -43,9 +43,9 @@ export async function crearModulo(numero: number, sucursalId: number): Promise<M
     return respuesta.json()
 }
 
-export async function eliminarModulo(id: number): Promise<void> {
+export async function eliminarModulo(id: number, token: string): Promise<void> {
     const respuesta = await fetch(`/api/modulos/${id}`, {
-        method: 'DELETE'
+        method: 'DELETE', headers: { Authorization: `Bearer ${token}` }
     })
 
     if (!respuesta.ok) {
