@@ -2,6 +2,7 @@ import Header from '../components/Header'
 import { Link } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { obtenerModulos, actualizarModulo, crearModulo, eliminarModulo, type ModuloAPI } from '../Services/Modulos'
+import { useSesion } from '../context/SesionContext'
 
 type AdministrarModulosProps = {
     sucursal: string
@@ -9,6 +10,9 @@ type AdministrarModulosProps = {
 }
 
 function AdministrarModulos({ sucursal, sucursalId }: AdministrarModulosProps) {
+    const { funcionario } = useSesion()
+    const token = funcionario?.token
+
     const [modulos, setModulos] = useState<ModuloAPI[]>([])
     const [nuevoNumero, setNuevoNumero] = useState('')
     const [moduloEditando, setModuloEditando] = useState<number | null>(null)
@@ -29,7 +33,12 @@ function AdministrarModulos({ sucursal, sucursalId }: AdministrarModulosProps) {
 
     async function cambiarEstado(modulo: ModuloAPI) {
         try {
-            const actualizado = await actualizarModulo(modulo.id, { activo: !modulo.activo })
+            if (!token) {
+                alert('Debes iniciar sesión como funcionario')
+                return
+            }
+
+            const actualizado = await actualizarModulo(modulo.id, { activo: !modulo.activo }, token)
 
             setModulos(anteriores => anteriores.map(m => m.id === actualizado.id ? actualizado : m))
         }
@@ -44,7 +53,12 @@ function AdministrarModulos({ sucursal, sucursalId }: AdministrarModulosProps) {
             return
 
         try {
-            const nuevo = await crearModulo(Number(nuevoNumero), sucursalId)
+            if (!token) {
+                alert('Debes iniciar sesión como funcionario')
+                return
+            }
+
+            const nuevo = await crearModulo(Number(nuevoNumero), sucursalId, token)
 
             setModulos(anteriores => [...anteriores, nuevo])
             setNuevoNumero('')
@@ -64,7 +78,12 @@ function AdministrarModulos({ sucursal, sucursalId }: AdministrarModulosProps) {
         }
 
         try {
-            const actualizado = await actualizarModulo(modulo.id, { numero })
+            if (!token) {
+                alert('Debes iniciar sesión como funcionario')
+                return
+            }
+
+            const actualizado = await actualizarModulo(modulo.id, { numero }, token)
             setModulos(anteriores => anteriores.map(m => m.id === actualizado.id ? actualizado : m))
 
             setModuloEditando(null)
@@ -78,7 +97,12 @@ function AdministrarModulos({ sucursal, sucursalId }: AdministrarModulosProps) {
 
     async function borrarModulo(modulo: ModuloAPI) {
         try {
-            await eliminarModulo(modulo.id)
+            if (!token) {
+                alert('Debes iniciar sesión como funcionario')
+                return
+            }
+
+            await eliminarModulo(modulo.id, token)
             setModulos(anteriores => anteriores.filter(m => m.id !== modulo.id))
         }
 

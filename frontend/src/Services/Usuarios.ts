@@ -3,6 +3,7 @@ export interface UsuarioAPI {
     nombre: string
     correo: string
     rut: string
+    token?: string
 }
 
 export interface NuevoUsuario {

@@ -31,10 +31,10 @@ export async function obtenerTurnos(sucursalId: number): Promise<TurnoAPI[]> {
     return respuesta.json()
 }
 
-export async function actualizarTurno(id: number, estado: string, modulo: number | null): Promise<TurnoAPI> {
+export async function actualizarTurno(id: number, estado: string, modulo: number | null, token: string): Promise<TurnoAPI> {
     const respuesta = await fetch(`/api/turnos/${id}`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ estado, modulo })
     })
 

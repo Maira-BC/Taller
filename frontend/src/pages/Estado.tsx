@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import Header from '../components/Header'
 import { obtenerTurnos, actualizarTurno, type TurnoAPI } from '../Services/Turnos'
 import { obtenerModulos, type ModuloAPI } from '../Services/Modulos'
+import { useSesion } from '../context/SesionContext'
 
 type EstadoProps = {
     sucursal: string
@@ -11,6 +12,9 @@ type EstadoProps = {
 
 function Estado({ sucursal, sucursalId }: EstadoProps) {
     const navigate = useNavigate()
+    const { funcionario } = useSesion()
+    const token = funcionario?.token
+
     const [modulos, setModulos] = useState<ModuloAPI[]>([])
     const [mensaje, setMensaje] = useState('')
     const [turnosAPI, setTurnosAPI] = useState<TurnoAPI[]>([])
@@ -73,10 +77,16 @@ function Estado({ sucursal, sucursalId }: EstadoProps) {
         const siguienteTurno = turnosEnEspera[0]
 
         try {
+            if (!token) {
+                alert('Debes iniciar sesión como funcionario')
+                return
+            }
+
             const turnoActualizado = await actualizarTurno(
                 siguienteTurno.id,
                 'atendiendo',
-                moduloElegido
+                moduloElegido,
+                token
             )
 
             setTurnosAPI(turnosAPI.map((turno) =>
@@ -93,10 +103,16 @@ function Estado({ sucursal, sucursalId }: EstadoProps) {
 
     const finalizarTurno = async (id: number) => {
         try {
+            if (!token) {
+                alert('Debes iniciar sesión como funcionario')
+                return
+            }
+
             const turnoFinalizado = await actualizarTurno(
                 id,
                 'finalizado',
-                null
+                null,
+                token
             )
 
             setTurnosAPI(turnosAPI.map((turno) =>

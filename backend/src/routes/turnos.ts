@@ -1,6 +1,7 @@
 import { Router, type Response } from 'express'
 import { pool } from '../db/postgres.js'
 import { Evento } from '../models/Evento.js'
+import { verificarFuncionario } from '../middleware/autenticacion.js'
 
 const router = Router()
 
@@ -55,7 +56,7 @@ router.post('/turnos', async (req, res) => {
   res.status(201).json(turno)
 })
 
-router.patch('/turnos/:id', async (req, res) => {
+router.patch('/turnos/:id', verificarFuncionario, async (req, res) => {
   const { estado, modulo } = req.body
   // El módulo se conserva al finalizar para que quede registrado en el historial
   const { rows } = await pool.query(
@@ -76,7 +77,7 @@ router.patch('/turnos/:id', async (req, res) => {
   res.json(turno)
 })
 
-router.get('/historial', async (req, res) => {
+router.get('/historial', verificarFuncionario, async (req, res) => {
   const filtro: Record<string, unknown> = { accion: 'finalizado' }
   if (req.query.sucursalId) filtro.sucursalId = Number(req.query.sucursalId)
   const eventos = await Evento.find(filtro, { _id: 0, __v: 0 }).sort({ fecha: -1 }).limit(100)

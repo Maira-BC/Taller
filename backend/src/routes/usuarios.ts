@@ -2,6 +2,7 @@ import { Router } from 'express'
 import { pool } from '../db/postgres.js'
 import bcrypt from 'bcryptjs'
 import { formatearRut, validarRut } from '../utils/rut.js'
+import jwt from 'jsonwebtoken'
 
 const router = Router()
 const SALT_ROUNDS = 10
@@ -40,8 +41,16 @@ router.post("/login", async (req, res) => {
     return
     }
     const {contrasena_hash, ...datos } = usuario
-    res.json(datos)
+    const secreto = process.env.JWT_SECRET
 
+    if (!secreto) {
+        res.status(500).json({ message: 'Error de configuración del servidor' })
+        return
+    }
+
+    const token = jwt.sign({ id: usuario.id, tipo: 'funcionario'}, secreto, { expiresIn: '2h' })
+
+    res.json({ ...datos, token })
 })
 
 export default router

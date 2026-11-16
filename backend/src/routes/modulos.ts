@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import { pool } from '../db/postgres.js'
 import { notificarCambio } from './turnos.js'
+import { verificarFuncionario } from '../middleware/autenticacion.js'
 
 const router = Router()
 
@@ -15,7 +16,7 @@ router.get('/modulos', async (req, res) => {
     res.json(rows)
 })
 
-router.post('/modulos', async (req, res) => {
+router.post('/modulos', verificarFuncionario, async (req, res) => {
     const { numero, sucursalId } = req.body
 
     const { rows } = await pool.query(
@@ -27,7 +28,7 @@ router.post('/modulos', async (req, res) => {
     res.status(201).json(rows[0])
 })
 
-router.patch('/modulos/:id', async (req, res) => {
+router.patch('/modulos/:id', verificarFuncionario, async (req, res) => {
     const { numero, activo } = req.body
 
     const { rows } = await pool.query(
@@ -44,7 +45,7 @@ router.patch('/modulos/:id', async (req, res) => {
     res.json(rows[0])
 })
 
-router.delete('/modulos/:id', async (req, res) => {
+router.delete('/modulos/:id', verificarFuncionario, async (req, res) => {
     const { rows } = await pool.query(
         `DELETE FROM modulos WHERE id = $1 AND NOT EXISTS (SELECT 1 FROM turnos WHERE sucursal_id = modulos.sucursal_id AND modulo = modulos.numero AND estado = 'atendiendo') RETURNING id, sucursal_id AS "sucursalId"`,
         [req.params.id]
