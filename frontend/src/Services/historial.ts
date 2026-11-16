@@ -8,8 +8,8 @@ export interface infoTurno {
     fecha: string;
 }
 
-export async function getHistorial():Promise<infoTurno[]> {
-    const res = await fetch("/api/historial");
+export async function getHistorial(sucursalId: number):Promise<infoTurno[]> {
+    const res = await fetch(`/api/historial?sucursalId=${sucursalId}`);
     if (!res.ok) {
         throw new Error("No se pudo cargar el historial")
     }
