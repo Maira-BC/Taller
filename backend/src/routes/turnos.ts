@@ -6,10 +6,10 @@ const router = Router()
 
 const COLUMNAS_TURNO = 'id, numero, tipo, estado, modulo, sucursal_id AS "sucursalId"'
 
-// Pantallas conectadas por sucursal (Server-Sent Events), para avisarles cuando cambian los turnos
+// cambio en vista de turnos por sucursal
 const pantallas = new Map<number, Set<Response>>()
 
-function notificarCambio(sucursalId: number) {
+export function notificarCambio(sucursalId: number) {
   for (const pantalla of pantallas.get(sucursalId) ?? []) {
     pantalla.write('data: actualizado\n\n')
   }

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import Header from '../components/Header'
 import { obtenerTurnos, type TurnoAPI } from '../Services/Turnos'
 import { getHistorial, type infoTurno } from '../Services/historial'
+import { obtenerModulos, type ModuloAPI } from '../Services/Modulos'
 
 type AtencionProps = {
     sucursal: string
@@ -9,7 +10,7 @@ type AtencionProps = {
 }
 
 function Atencion({ sucursal, sucursalId }: AtencionProps) {
-    const modulos = [1, 2, 3, 4, 5]
+    const [modulos, setModulos] = useState<ModuloAPI[]>([])
     const [turnos, setTurnos] = useState<TurnoAPI[]>([])
     const [anterior, setAnterior] = useState<infoTurno | null>(null)
     const [cargando, setCargando] = useState(sucursalId !== null)
@@ -22,12 +23,13 @@ function Atencion({ sucursal, sucursalId }: AtencionProps) {
 
         async function cargarTurnos() {
             try {
-                const [datosTurnos, historial] = await Promise.all([
+                const [datosTurnos, historial, datosModulos] = await Promise.all([
                     obtenerTurnos(sucursalId!),
-                    getHistorial(sucursalId!)
+                    getHistorial(sucursalId!),
+                    obtenerModulos(sucursalId!)
                 ])
                 setTurnos(datosTurnos)
-                // El historial viene ordenado del más reciente al más antiguo
+                setModulos(datosModulos)
                 setAnterior(historial[0] ?? null)
                 setError('')
             }
@@ -41,7 +43,7 @@ function Atencion({ sucursal, sucursalId }: AtencionProps) {
 
         cargarTurnos()
 
-        // El backend avisa cada vez que un funcionario llama, finaliza o se genera un turno
+        // El backend avisa cada vez que cambia un turno o un módulo de la sucursal
         const eventos = new EventSource(`/api/eventos?sucursalId=${sucursalId}`)
         eventos.onmessage = cargarTurnos
         return () => eventos.close()
@@ -60,16 +62,18 @@ function Atencion({ sucursal, sucursalId }: AtencionProps) {
                     {error && <p className="mensaje-error">{error}</p>}
                     <h3>Atendiendo ahora</h3>
                     <div className="modulos">
-                        {modulos.map((numeroModulo) => {
+                        {modulos.map((modulo) => {
                             const turnoActual = turnos.find(
                                 (turno) =>
-                                    turno.modulo === numeroModulo &&
+                                    turno.modulo === modulo.numero &&
                                     turno.estado === 'atendiendo'
                             )
+                            // Los módulos inactivos no se muestran, salvo que aún estén terminando una atención
+                            if (!modulo.activo && !turnoActual) return null
 
                             return (
-                                <div className="modulo" key={numeroModulo}>
-                                    <h4>Módulo {numeroModulo}</h4>
+                                <div className="modulo" key={modulo.id}>
+                                    <h4>Módulo {modulo.numero}</h4>
                                     <p className="numero-modulo">{turnoActual?.numero ?? '---'}</p>
                                 </div>
                             )

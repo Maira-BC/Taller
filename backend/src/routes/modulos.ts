@@ -1,5 +1,6 @@
 import { Router } from 'express'
 import { pool } from '../db/postgres.js'
+import { notificarCambio } from './turnos.js'
 
 const router = Router()
 
@@ -22,6 +23,7 @@ router.post('/modulos', async (req, res) => {
         [numero, sucursalId]
     )
 
+    notificarCambio(sucursalId)
     res.status(201).json(rows[0])
 })
 
@@ -35,14 +37,16 @@ router.patch('/modulos/:id', async (req, res) => {
 
     if (rows.length === 0) {
         res.status(404).json({ message: 'Módulo no encontrado' })
+        return
     }
 
+    notificarCambio(rows[0].sucursalId)
     res.json(rows[0])
 })
 
 router.delete('/modulos/:id', async (req, res) => {
     const { rows } = await pool.query(
-        `DELETE FROM modulos WHERE id = $1 AND NOT EXISTS (SELECT 1 FROM turnos WHERE sucursal_id = modulos.sucursal_id AND modulo = modulos.numero AND estado = 'atendiendo') RETURNING id`,
+        `DELETE FROM modulos WHERE id = $1 AND NOT EXISTS (SELECT 1 FROM turnos WHERE sucursal_id = modulos.sucursal_id AND modulo = modulos.numero AND estado = 'atendiendo') RETURNING id, sucursal_id AS "sucursalId"`,
         [req.params.id]
     )
 
@@ -52,6 +56,7 @@ router.delete('/modulos/:id', async (req, res) => {
         return
     }
 
+    notificarCambio(rows[0].sucursalId)
     res.status(204).send()
 })
 

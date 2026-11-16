@@ -23,12 +23,8 @@ function Rut({ sucursal }: RutProps) {
     const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
         // Sin esto el formulario recarga la página y se pierde la sucursal elegida
         event.preventDefault()
-        if (rut.length < 8) {
-            setError('El RUT está incompleto')
-            return
-        }
         if (!validarRut(rut)) {
-            setError('El dígito verificador no corresponde a ese RUT')
+            setError('El RUT está incompleto')
             return
         }
         setError('')

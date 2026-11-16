@@ -6,7 +6,7 @@ export interface ModuloAPI {
 }
 
 export async function obtenerModulos(sucursalId: number): Promise<ModuloAPI[]> {
-    const respuesta = await fetch(`http://localhost:3000/api/modulos?sucursalId=${sucursalId}`)
+    const respuesta = await fetch(`/api/modulos?sucursalId=${sucursalId}`)
 
     if (!respuesta.ok) {
         throw new Error('No se pudieron obtener los módulos')
@@ -16,7 +16,7 @@ export async function obtenerModulos(sucursalId: number): Promise<ModuloAPI[]> {
 }
 
 export async function actualizarModulo(id: number, cambios: { activo?: boolean; numero?: number }): Promise<ModuloAPI> {
-    const respuesta = await fetch(`http://localhost:3000/api/modulos/${id}`, {
+    const respuesta = await fetch(`/api/modulos/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(cambios)
@@ -30,7 +30,7 @@ export async function actualizarModulo(id: number, cambios: { activo?: boolean; 
 }
 
 export async function crearModulo(numero: number, sucursalId: number): Promise<ModuloAPI> {
-    const respuesta = await fetch(`http://localhost:3000/api/modulos`, {
+    const respuesta = await fetch(`/api/modulos`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ numero, sucursalId })
@@ -44,7 +44,7 @@ export async function crearModulo(numero: number, sucursalId: number): Promise<M
 }
 
 export async function eliminarModulo(id: number): Promise<void> {
-    const respuesta = await fetch(`http://localhost:3000/api/modulos/${id}`, {
+    const respuesta = await fetch(`/api/modulos/${id}`, {
         method: 'DELETE'
     })
 
