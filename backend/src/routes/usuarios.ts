@@ -3,11 +3,12 @@ import { pool } from '../db/postgres.js'
 import bcrypt from 'bcryptjs'
 import { formatearRut, validarRut } from '../utils/rut.js'
 import jwt from 'jsonwebtoken'
+import { verificarFuncionario } from '../middleware/autenticacion.js'
 
 const router = Router()
 const SALT_ROUNDS = 10
 
-router.post("/usuarios", async (req, res) => {
+router.post("/usuarios", verificarFuncionario, async (req, res) => {
     const {nombre, correo, rut, contrasena } = req.body
     if (!validarRut(rut)) {
         res.status(400).json({ message: 'RUT inválido' })

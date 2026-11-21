@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import logo from '../assets/logo.png'
 import { useSesion } from '../context/SesionContext'
 
@@ -26,6 +26,7 @@ function Header({ sucursal }: HeaderProps) {
                 <div className="sesion-header">
                     <span className="nombre-funcionario">{funcionario.nombre}</span>
                     <button type="button" className="boton-cerrar-sesion" onClick={salir}>Cerrar sesión</button>
+                    <Link to="/registro" className="boton-cerrar-sesion">Registrar funcionario</Link>
                 </div>
             )}
         </header>
