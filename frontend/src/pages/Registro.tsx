@@ -1,14 +1,17 @@
-import { useState, type FormEvent } from 'react'
+import { useState, useContext, type FormEvent } from 'react'
 import { Link } from 'react-router-dom'
 import Header from '../components/Header'
 import { crearUsuario } from '../Services/Usuarios'
 import { formatearRut, validarRut } from '../utils/rut'
+import { SesionContext } from '../context/SesionContext'
 
 type RegistroProps = {
   sucursal: string
 }
 
 function Registro({ sucursal }: RegistroProps) {
+    const { funcionario } = useContext(SesionContext)
+
     const [nombre, setNombre] = useState('')
     const [correo, setCorreo] = useState('')
     const [rut, setRut] = useState('')
@@ -39,7 +42,14 @@ function Registro({ sucursal }: RegistroProps) {
         setError('')
 
         try {
-            const usuario = await crearUsuario({ nombre, correo, rut, contrasena })
+            if (!funcionario?.token) {
+                setError('Debes iniciar sesión como funcionario')
+                return
+            }
+            const usuario = await crearUsuario(
+                { nombre, correo, rut, contrasena },
+                funcionario.token
+            )
             setUsuarioCreado(usuario.nombre)
             setNombre('')
             setCorreo('')
@@ -60,7 +70,7 @@ function Registro({ sucursal }: RegistroProps) {
             <Header sucursal={sucursal} />
             <main className="registro">
                 <div className="contenido-registro">
-                    <h2>CREAR USUARIO</h2>
+                    <h2>REGISTRAR FUNCIONARIO</h2>
                     <hr />
                     <form className="formulario-cuenta" onSubmit={handleSubmit}>
                         <label htmlFor="nombre">Nombre:</label>
@@ -75,11 +85,11 @@ function Registro({ sucursal }: RegistroProps) {
                         <input type="password" id="confirmacion" className="form-control" value={confirmacion} onChange={(event) => setConfirmacion(event.target.value)} required />
                         {error && <p className="mensaje-error">{error}</p>}
                         {usuarioCreado && <p className="mensaje-exito">Usuario {usuarioCreado} creado correctamente</p>}
-                        <button type="submit" className="boton-cuenta" disabled={enviando}>
-                            {enviando ? 'Creando...' : 'CREAR USUARIO'}
+                        <button type="submit" className="boton-cuenta" style={{ minWidth: '260px', whiteSpace: 'nowrap' }} disabled={enviando}>
+                            {enviando ? 'Creando...' : 'REGISTRAR FUNCIONARIO'}
                         </button>
                     </form>
-                    <Link to="/login" className="boton-continuar boton-volver-cuenta" aria-label="Volver a iniciar sesión">←</Link>
+                    <Link to="/estado" className="boton-continuar boton-volver-cuenta" aria-label="Volver a gestión de turnos">←</Link>
                 </div>
             </main>
         </>

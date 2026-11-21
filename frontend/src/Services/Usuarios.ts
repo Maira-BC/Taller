@@ -31,13 +31,16 @@ export async function iniciarSesion(correo: string, contrasena: string): Promise
     return respuesta.json()
 }
 
-export async function crearUsuario(usuario: NuevoUsuario): Promise<UsuarioAPI> {
+export async function crearUsuario(usuario: NuevoUsuario, token: string): Promise<UsuarioAPI> {
     const respuesta = await fetch('/api/usuarios', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         body: JSON.stringify(usuario)
     })
 
+    if (respuesta.status === 401 || respuesta.status === 403) {
+        throw new Error('Tu sesión no es válida o ha expirado')
+    }
     if (respuesta.status === 409) {
         throw new Error('El correo o RUT ya está registrado')
     }
