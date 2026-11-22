@@ -60,7 +60,7 @@ function Historial({ sucursal, sucursalId }: HistorialProps) {
                             <li key={turno.turnoId} className="fila-turno">
                                 <span>{turno.numero}</span>
                                 <span>{turno.tipo}</span>
-                                <span>{turno.accion}</span>
+                                <span>{turno.accion === 'finalizado' ? 'Finalizado' : turno.accion}</span>
                             </li>
                         ))}
                     </ul>

@@ -10,6 +10,7 @@ import Rut from "./pages/Rut"
 import type { Turno as TurnoData } from "./data/turnos"
 import Estado from "./pages/Estado"
 import Historial from "./pages/Historial"
+import Metricas from "./pages/Metricas"
 import Login from "./pages/Login"
 import Registro from "./pages/Registro"
 import Atencion from "./pages/Atencion"
@@ -61,6 +62,7 @@ function App() {
         <Route path="/estado" element={ funcionario?.token ? <Estado sucursal={sucursal} sucursalId={sucursalId} /> : <Navigate to="/login" replace /> } />
         <Route path="/administrar-modulos" element={ funcionario?.token ? <AdministrarModulos sucursal={sucursal} sucursalId={sucursalId} /> : <Navigate to="/login" replace /> } />
         <Route path="/historial" element={ funcionario?.token ? <Historial sucursal={sucursal} sucursalId={sucursalId} /> : <Navigate to="/login" replace /> } />
+        <Route path="/metricas" element={ funcionario?.token ? <Metricas sucursal={sucursal} sucursalId={sucursalId} /> : <Navigate to="/login" replace /> } />
         <Route path="/login" element={<Login sucursal={sucursal} sucursalId={sucursalId} setFuncionario={setFuncionario} />} />
         <Route path="/registro" element={ funcionario?.token ? <Registro sucursal={sucursal} /> : <Navigate to="/login" replace /> } />
         <Route path="/atencion" element={  <Atencion sucursal={sucursal} sucursalId={sucursalId} /> } />

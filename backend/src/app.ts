@@ -8,6 +8,7 @@ import sucursales from './routes/sucursales.js'
 import turnos from './routes/turnos.js'
 import modulosRouter from './routes/modulos.js'
 import usuarios from './routes/usuarios.js'
+import metricas from './routes/metricas.js'
 
 const spec = YAML.parse(fs.readFileSync('openapi.yaml', 'utf8'))
 export const app = express()
@@ -20,6 +21,7 @@ app.use('/api/sucursales', sucursales)
 app.use('/api', turnos)
 app.use('/api', modulosRouter)
 app.use('/api', usuarios)
+app.use('/api', metricas)
 
 app.use((err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
   res.status(err.status ?? 500).json({ message: err.message, errors: err.errors })

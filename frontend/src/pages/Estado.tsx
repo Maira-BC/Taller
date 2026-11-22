@@ -188,6 +188,12 @@ function Estado({ sucursal, sucursalId }: EstadoProps) {
                          <button type="button" className="boton-llamar" onClick={VolverARegistro}>
                          AÑADIR TURNO</button>
                         <Link to="/historial" className="boton-historial" aria-label="Ver historial">◷</Link>
+                        <Link to="/metricas" className="boton-historial" aria-label="Ver métricas de atención" title="Métricas de atención"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                            <path d="M4 20V12" />
+                            <path d="M10 20V4" />
+                            <path d="M16 20V9" />
+                            <path d="M22 20V6" />
+                            </svg></Link>
                     </div>
                     {mensaje && (<p className="mensaje-estado">{mensaje}</p>)}
                 </div>
