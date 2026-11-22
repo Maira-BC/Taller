@@ -190,6 +190,50 @@ paths:
               schema:
                 type: [object, 'null']
                 properties: { numero: { type: string }, modulo: { type: [integer, 'null'] } }
+
+  /metricas:
+    get:
+      summary: Obtiene las métricas de turnos en una sucursal
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: sucursalId
+          in: query
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+      responses:
+        '200':
+          description: Métricas obtenidas correctamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  totalEventos:
+                    type: integer
+                  totalTurnos:
+                    type: integer
+                  turnosConEspera:
+                    type: integer
+                  turnosConAtencion:
+                    type: integer
+                  promedioEspera:
+                    type: [number, 'null']
+                    description: Tiempo promedio de espera en minutos
+                  promedioAtencion:
+                    type: [number, 'null']
+                    description: Tiempo promedio de atención en minutos
+        '400':
+          description: Sucursal inválida
+        '401':
+          description: Autenticación requerida o sesión inválida
+        '403':
+          description: Acceso no autorizado
+        '500':
+          description: Error al obtener las métricas
+
 components:
   securitySchemes:
     bearerAuth:
