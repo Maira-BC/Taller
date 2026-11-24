@@ -41,6 +41,12 @@ function Estado({ sucursal, sucursalId }: EstadoProps) {
         }
 
         cargarTurnos()
+        const intervalo = setInterval(() => {
+            cargarTurnos()
+        }, 2000)
+        return () => {
+            clearInterval(intervalo)
+        }
     }, [sucursalId])
 
     const VolverARegistro = () => {
