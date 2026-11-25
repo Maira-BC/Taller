@@ -24,7 +24,7 @@ function Inicio({ sucursal, sucursalId }: InicioProps) {
                     →
                 </Link>
           <hr />
-                <h3>INGRESO USUARIO</h3>
+                <h3>INGRESO CLIENTE</h3>
                 <Link to={destinoUsuario} className="boton-continuar">
                     →
                 </Link>

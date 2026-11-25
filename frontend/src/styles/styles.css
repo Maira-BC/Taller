@@ -11,17 +11,16 @@ body {
 
 header {
     font-family: Georgia, 'Times New Roman', Times, serif;
-    height: 140px;
+    min-height: 140px;
     background-color: #96d4d6;
-    display: flex;
+    display: grid;
+    grid-template-columns: 80px minmax(0, 1fr) 165px;
     align-items: center;
-    justify-content: center;
-    position: relative;
+    gap: 10px;
+    padding: 15px 20px;
 }
 
 .header img {
-    position: absolute;
-    left: 20px;
     width: 80px;
     height: auto;
 }
@@ -34,9 +33,20 @@ header h1 {
     text-align: center;
 }
 
+.header-texto {
+    text-align: left;
+    min-width: 0;
+}
+
+.header-texto h1 {
+    text-align: left;
+}
+
+.header-texto p {
+    margin: 5px 0 0;
+}
+
 .sesion-header {
-    position: absolute;
-    right: 20px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -54,6 +64,18 @@ header h1 {
     background-color: white;
     font-size: 14px;
     cursor: pointer;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 165px;
+    text-decoration: none;
+    color: black;
+}
+
+.boton-cerrar-sesion:hover {
+    color: black;
+    text-decoration: none;
 }
 
 .inicio {
@@ -484,17 +506,22 @@ header h1 {
 
 .acciones-estado {
     font-family: Georgia, 'Times New Roman', Times, serif;
-    font-family: Georgia, 'Times New Roman', Times, serif;
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 10px;
+    flex-wrap: wrap;
+    gap: 8px;
     margin-top: 30px;
 }
 
 .acciones-estado .boton-llamar {
-    font-family: Georgia, 'Times New Roman', Times, serif;
+    width: auto;
+    min-width: 165px;
+    height: 48px;
+    padding: 0 15px;
     margin: 0;
+    font-size: 15px;
+    white-space: nowrap;
 }
 
 .boton-llamar {
@@ -515,8 +542,8 @@ header h1 {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 45px;
-    height: 45px;
+    width: 32px;
+    height: 40px;
     border-radius: 50%;
     color: #000000;
     text-decoration: none;
@@ -739,153 +766,6 @@ header h1 {
     right: 0;
 }
 
-@media (max-width: 600px) {
-    header {
-        height: 120px;
-        padding: 15px;
-    }
-
-    .header img {
-        width: 65px;
-        left: 15px;
-    }
-
-    .header-texto {
-        width: 70%;
-        text-align: center;
-    }
-
-    header h1 {
-        font-size: 20px;
-        line-height: 1.2;
-    }
-
-    .header-texto p {
-        margin: 5px 0 0;
-        font-size: 12px;
-    }
-
-    /* En pantallas chicas no hay espacio al costado del título: el botón va arriba a la derecha */
-    .sesion-header {
-        top: 8px;
-        right: 10px;
-    }
-
-    .nombre-funcionario {
-        display: none;
-    }
-
-    .boton-cerrar-sesion {
-        padding: 3px 10px;
-        font-size: 12px;
-    }
-
-    .inicio {
-        min-height: calc(100vh - 120px);
-        padding-top: 180px;
-        padding-left: 15px;
-        padding-right: 15px;
-    }
-
-    .inicio h2 {
-        font-size: 40px;
-    }
-
-    .sucursales {
-        min-height: calc(100vh - 120px);
-        padding: 25px 15px;
-    }
-
-    .contenido-sucursales {
-        padding: 20px;
-    }
-
-    .contenido-sucursales h2 {
-        font-size: 26px;
-    }
-
-    .seleccion-sucursal {
-        max-width: 300px;
-    }
-
-    .ingreso {
-        min-height: calc(100vh - 120px);
-        padding-top: 110px;
-        gap: 30px;
-    }
-
-    .rut {
-        padding-top: 30px;
-    }
-
-    .turno {
-        min-height: calc(100vh - 120px);
-        padding-top: 60px;
-        padding-left: 20px;
-        padding-right: 20px;
-    }
-
-    .turno h2 {
-        font-size: 28px;
-        margin-bottom: 30px;
-    }
-
-    .seleccion-turno {
-        max-width: 300px;
-    }
-
-    .estado {
-        min-height: calc(100vh - 120px);
-        padding: 25px 15px;
-    }
-
-    .contenido-estado {
-        padding: 20px;
-    }
-
-    .contenido-estado h2 {
-        font-size: 26px;
-    }
-
-    .modulos {
-        grid-template-columns: 1fr;
-        justify-items: center;
-    }
-
-    .modulo {
-        width: 100%;
-        max-width: 250px;
-    }
-
-    .indicadores {
-        flex-direction: column;
-        align-items: center;
-        gap: 5px;
-    }
-
-    .historial {
-        min-height: calc(100vh -120px);
-        padding: 25px 15px;
-    }
-
-    .contenido-historial {
-        padding: 20px;
-    }
-
-    .contenido-historial h2 {
-        font-size: 26px;
-    }
-
-    .fila-turno {
-        font-size: 13px;
-        gap: 5px;
-    }
-
-    .lista-modulos-admin {
-        grid-template-columns: 1fr;
-    }
-}
-
 .atencion {
     min-height: calc(100vh - 140px);
     padding: 40px 20px;
@@ -1028,7 +908,190 @@ header h1 {
     background-color: #f2f2f2;
 }
 
+.resumen-metricas {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+    max-width: 700px;
+    margin: 30px auto;
+}
+
+.tarjeta-metrica {
+    background-color: white;
+    border: 1px solid #dddddd;
+    border-radius: 12px;
+    padding: 25px 20px;
+    text-align: center;
+}
+
+.tarjeta-metrica h3 {
+    font-size: 19px;
+    font-weight: normal;
+    margin-bottom: 15px;
+}
+
+.tarjeta-metrica p {
+    font-size: 25px;
+    font-weight: bold;
+    color: #367d80;
+    margin: 0;
+}
+
 @media (max-width: 600px) {
+    header {
+        min-height: 120px;
+        height: auto;
+        grid-template-columns: 65px minmax(0, 1fr);
+        gap: 10px;
+        padding: 15px;
+    }
+
+    header h1 {
+        font-size: 20px;
+        line-height: 1.2;
+    }
+
+    .header img {
+        width: 65px;
+        left: 15px;
+    }
+
+    .header-texto {
+        width: 100%;
+        text-align: left;
+    }
+
+    .header-texto h1 {
+        text-align: left;
+    }
+
+        .header-texto p {
+        margin: 5px 0 0;
+        font-size: 12px;
+    }
+
+    .sesion-header {
+        grid-column: 1 / -1;
+        justify-self: center;
+        width: 100%;
+    }
+
+    .nombre-funcionario {
+        display: block;
+        text-align: center;
+        font-size: 13px;
+    }
+
+    .boton-cerrar-sesion {
+        padding: 3px 10px;
+        font-size: 12px;
+    }
+
+    .inicio {
+        min-height: calc(100vh - 120px);
+        padding-top: 180px;
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+
+    .inicio h2 {
+        font-size: 40px;
+    }
+
+    .sucursales {
+        min-height: calc(100vh - 120px);
+        padding: 25px 15px;
+    }
+
+    .contenido-sucursales {
+        padding: 20px;
+    }
+
+    .contenido-sucursales h2 {
+        font-size: 26px;
+    }
+
+    .seleccion-sucursal {
+        max-width: 300px;
+    }
+
+    .ingreso {
+        min-height: calc(100vh - 120px);
+        padding-top: 110px;
+        gap: 30px;
+    }
+
+    .rut {
+        padding-top: 30px;
+    }
+
+    .turno {
+        min-height: calc(100vh - 120px);
+        padding-top: 60px;
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+
+    .turno h2 {
+        font-size: 28px;
+        margin-bottom: 30px;
+    }
+
+    .seleccion-turno {
+        max-width: 300px;
+    }
+
+    .estado {
+        min-height: calc(100vh - 120px);
+        padding: 25px 15px;
+    }
+
+    .contenido-estado {
+        padding: 20px;
+    }
+
+    .contenido-estado h2 {
+        font-size: 26px;
+    }
+
+    .modulos {
+        grid-template-columns: 1fr;
+        justify-items: center;
+    }
+
+    .modulo {
+        width: 100%;
+        max-width: 250px;
+    }
+
+    .indicadores {
+        flex-direction: column;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .historial {
+        min-height: calc(100vh -120px);
+        padding: 25px 15px;
+    }
+
+    .contenido-historial {
+        padding: 20px;
+    }
+
+    .contenido-historial h2 {
+        font-size: 26px;
+    }
+
+    .fila-turno {
+        font-size: 13px;
+        gap: 5px;
+    }
+
+    .lista-modulos-admin {
+        grid-template-columns: 1fr;
+    }
+
     .login, .registro {
         min-height: calc(100vh - 120px);
         padding: 25px 15px;
@@ -1067,5 +1130,38 @@ header h1 {
     .turno-contiguo {
         width: 100%;
         max-width: 250px;
+    }
+
+    .resumen-metricas {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .tarjeta-metrica {
+        padding: 20px 15px;
+    }
+
+    .tarjeta-metrica h3 {
+        font-size: 18px;
+    }
+
+    .tarjeta-metrica p {
+        font-size: 23px;
+    }
+
+    .encabezado-estado {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 45px;
+        gap: 8px;
+    }
+
+    .encabezado-estado h2 {
+        text-align: center;
+        min-width: 0;
+    }
+
+    .encabezado-estado .boton-administrar-modulos {
+        position: static;
+        justify-self: center;
     }
 }

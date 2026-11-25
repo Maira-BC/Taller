@@ -4,7 +4,9 @@ servers: [{ url: /api }]
 paths:
   /usuarios:
    post:
-    summary: Creacion de usuario
+    summary: Creación de funcionario
+    security:
+      - bearerAuth: []
     requestBody:
      required: true
      content:
@@ -19,19 +21,22 @@ paths:
          contrasena: { type: string, format: password, minLength: 8}
          rut: { type: string, pattern: '^\d{7,8}-[\dkK]$' }
     responses:
-     '201': {description: OK}
-     '409': { description: Correo ya registrado}
-    
+     '201': { description: Funcionario registrado correctamente }
+     '400': { description: RUT inválido }
+     '401': { description: Autenticación requerida o sesión inválida }
+     '403': { description: Acceso no autorizado }
+     '409': { description: Correo o RUT ya registrado }
+
 
   /login:
-   post: 
+   post:
     summary: Inicio de sesión
     requestBody:
      required: true
      content:
       application/json:
        schema:
-        type: object 
+        type: object
         required: [correo, contrasena]
         additionalProperties: false
         properties:
@@ -185,7 +190,56 @@ paths:
               schema:
                 type: [object, 'null']
                 properties: { numero: { type: string }, modulo: { type: [integer, 'null'] } }
+
+  /metricas:
+    get:
+      summary: Obtiene las métricas de turnos en una sucursal
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: sucursalId
+          in: query
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+      responses:
+        '200':
+          description: Métricas obtenidas correctamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  totalEventos:
+                    type: integer
+                  totalTurnos:
+                    type: integer
+                  turnosConEspera:
+                    type: integer
+                  turnosConAtencion:
+                    type: integer
+                  promedioEspera:
+                    type: [number, 'null']
+                    description: Tiempo promedio de espera en minutos
+                  promedioAtencion:
+                    type: [number, 'null']
+                    description: Tiempo promedio de atención en minutos
+        '400':
+          description: Sucursal inválida
+        '401':
+          description: Autenticación requerida o sesión inválida
+        '403':
+          description: Acceso no autorizado
+        '500':
+          description: Error al obtener las métricas
+
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
   schemas:
     Estado: { type: string, enum: [espera, atendiendo, finalizado] }
     Sucursal:

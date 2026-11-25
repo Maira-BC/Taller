@@ -77,7 +77,7 @@ function Sucursales({ setSucursal, setSucursalId, esFuncionario }: SucursalesPro
         if (!sucursalSeleccionada) return;
         setSucursal(sucursalSeleccionada.nombre)
         setSucursalId(sucursalSeleccionada.id)
-        navigate(esFuncionario ? '/estado' : '/ingreso')
+        navigate(esFuncionario ? '/estado' : '/')
     }
 
   return (

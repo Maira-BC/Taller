@@ -10,6 +10,7 @@ import Rut from "./pages/Rut"
 import type { Turno as TurnoData } from "./data/turnos"
 import Estado from "./pages/Estado"
 import Historial from "./pages/Historial"
+import Metricas from "./pages/Metricas"
 import Login from "./pages/Login"
 import Registro from "./pages/Registro"
 import Atencion from "./pages/Atencion"
@@ -20,6 +21,17 @@ import { Navigate } from 'react-router-dom'
 
 // La sucursal se guarda en el navegador para pedirla una sola vez, aunque se recargue la página
 const CLAVE_SUCURSAL = 'sucursal'
+const CLAVE_FUNCIONARIO = 'funcionario'
+
+function leerFuncionarioGuardado(): UsuarioAPI | null {
+  try {
+    const guardado = sessionStorage.getItem(CLAVE_FUNCIONARIO)
+    return guardado ? JSON.parse(guardado) as UsuarioAPI : null
+  }
+  catch {
+    return null
+  }
+}
 
 function leerSucursalGuardada(): { id: number, nombre: string } | null {
   try {
@@ -34,7 +46,23 @@ function leerSucursalGuardada(): { id: number, nombre: string } | null {
 function App() {
   const [sucursal, setSucursal] = useState(() => leerSucursalGuardada()?.nombre ?? '')
   const [sucursalId, setSucursalId] = useState<number | null>(() => leerSucursalGuardada()?.id ?? null)
-  const [funcionario, setFuncionario] = useState<UsuarioAPI | null>(null)
+  const [funcionario, setFuncionario] = useState<UsuarioAPI | null>(
+    () => leerFuncionarioGuardado()
+  )
+
+  useEffect(() => {
+    try {
+      if (funcionario) {
+        sessionStorage.setItem(CLAVE_FUNCIONARIO, JSON.stringify(funcionario))
+      }
+      else {
+        sessionStorage.removeItem(CLAVE_FUNCIONARIO)
+      }
+    }
+    catch {
+      console.log('No se pudo guardar la sesión del funcionario.')
+    }
+  }, [funcionario])
 
   useEffect(() => {
     if (sucursalId === null) return
@@ -61,8 +89,9 @@ function App() {
         <Route path="/estado" element={ funcionario?.token ? <Estado sucursal={sucursal} sucursalId={sucursalId} /> : <Navigate to="/login" replace /> } />
         <Route path="/administrar-modulos" element={ funcionario?.token ? <AdministrarModulos sucursal={sucursal} sucursalId={sucursalId} /> : <Navigate to="/login" replace /> } />
         <Route path="/historial" element={ funcionario?.token ? <Historial sucursal={sucursal} sucursalId={sucursalId} /> : <Navigate to="/login" replace /> } />
+        <Route path="/metricas" element={ funcionario?.token ? <Metricas sucursal={sucursal} sucursalId={sucursalId} /> : <Navigate to="/login" replace /> } />
         <Route path="/login" element={<Login sucursal={sucursal} sucursalId={sucursalId} setFuncionario={setFuncionario} />} />
-        <Route path="/registro" element={<Registro sucursal={sucursal} />} />
+        <Route path="/registro" element={ funcionario?.token ? <Registro sucursal={sucursal} /> : <Navigate to="/login" replace /> } />
         <Route path="/atencion" element={  <Atencion sucursal={sucursal} sucursalId={sucursalId} /> } />
       </Routes>
     </SesionContext.Provider>
