@@ -47,7 +47,7 @@ export default function MiTurnoScreen({ route, navigation }: Props) {
                 setTurnoNoEncontrado(false);
 
                 if (turnoActual.estado === 'espera') {
-                    const delante = turnos.filter((item) => item.estado === 'espera' && item.tipo === turnoActual.tipo && item.id < turnoActual.id).length;
+                    const delante = turnos.filter((item) => item.estado === 'espera' && item.id < turnoActual.id).length;
                     setPersonasDelante(delante);
                 }
                 else {
