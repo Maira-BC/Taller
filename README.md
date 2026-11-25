@@ -53,9 +53,14 @@ La carpeta `src` se encuentra organizada de la siguiente manera:
 
 Además, `App.tsx` contiene las rutas y los datos que necesitan compartir las páginas, mientras que `main.tsx` se encarga de iniciar la aplicación.
 
+
 ## Ejecución del proyecto
 
-Para ejecutar el proyecto pimero se deben instalar las dependecias:
+## Archivos .env 
+- COPIAR CONTENDO DE .env.example en .env - que hay dentro de  /backend y dentro de /mobile, dependiendo de los puertos que se utilizen en el desarrollo.
+
+
+Para ejecutar el proyecto primero se deben instalar las dependecias:
 
 ```bash
 npm install
@@ -66,6 +71,14 @@ Luego se inicia el proyecto:
 ```bash
 npm run dev
 ```
+## servicio movil
+Instalación de dependencias/arranque:
+```bash
+cd mobile 
+npm install
+npx expo start --tunnel
+```
+
 
 ## Ejecución con dockers
 
@@ -82,6 +95,8 @@ Al crear la base de datos, `backend/db/init.sql` agrega estos funcionarios para 
 | admin@taller.cl | admin1234 | 12345678-5 |
 
 Si la base ya existía antes de este cambio, se puede recrear con `docker compose down -v` y luego `docker compose up -d` (esto borra los datos guardados).
+
+
 
 
 ## API pública utilizada
